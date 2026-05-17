@@ -1,0 +1,35 @@
+The configs are divided into three categories;
+Configurations for HQ devices 
+Configurations for Branch office devices
+Configurations for WAN cloud devices.
+
+
+In the LANs of HQ and Branch, the following were configured;
+
+VLANS
+SVIS
+HSRP
+ACLS
+IPSEC
+OSPF
+LACP
+STATIC ROUTES
+NAT
+DHCP
+DNS
+EMAIL
+WEB PAGES
+PORT SECURITY 
+GRE TUNNEL
+VOIP 
+CCTV VMS
+
+
+
+On WAN cloud devices, the following were configured;
+BGP
+OSPF
+ROUTE REDISTRIBUTION 
+
+
+
