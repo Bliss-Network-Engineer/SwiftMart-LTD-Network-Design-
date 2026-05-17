@@ -1,0 +1,384 @@
+Branch Office onfigs
+====================
+
+
+======================
+VLAN Creation
+======================
+vlan 10
+name Admin
+ex
+
+vlan 20
+name Sales
+ex
+
+vlan 30
+name IT
+ex
+
+vlan 50
+name CCTV
+ex
+
+vlan 60
+name VOIP
+ex
+
+
+===================================
+Access Layer Interface Assignment
+===================================
+=========Trunk
+int range fa0/1-fa0/2
+switchport mode trunk
+
+=========CCTV
+int Fa0/3
+switchport mode access 
+switchport access vlan 50
+switchport port-security
+switchport port-security maximum 1
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+ex
+
+=======VoIP
+int fa0/24
+switchport voice vlan 60
+switchport mode access
+switchport port-security
+switchport port-security maximum 2
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+ex
+
+====Admin
+int range fa0/4-fa0/10
+switchport mode access
+switchport access vlan 10
+switchport port-security
+switchport port-security maximum 1
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+ex
+
+======Sales
+int range fa0/4-fa0/10
+switchport mode access
+switchport access vlan 20
+switchport port-security
+switchport port-security maximum 1
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+ex
+
+=======IT
+int range fa0/4-fa0/10
+switchport mode access
+switchport access vlan 30
+switchport port-security
+switchport port-security maximum 1
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+ex
+int fa0/23
+switchport mode access
+switchport access vlan 50
+ex
+
+
+================
+SVIS and HSRP
+================
+
+=======Distribution Switch 1
+int vlan 10
+ip helper-address 10.10.10.10
+ip addr 192.168.2.2 255.255.255.224
+standby version 2
+standby 10 ip 192.168.2.1
+standby 10 priority 110
+standby 10 preempt
+ex
+
+int vlan 20
+ip helper-address 10.10.10.10
+ip addr 192.168.2.34 255.255.255.224
+standby version 2
+standby 20 ip 192.168.2.33
+standby 20 priority 110
+standby 20 preempt
+ex
+
+int vlan 30
+ip helper-address 10.10.10.10
+ip addr 192.168.2.66 255.255.255.224
+standby version 2
+standby 30 ip 192.168.2.65
+standby 30 priority 110
+standby 30 preempt
+ex
+
+
+int vlan 50
+ip helper-address 10.10.10.10
+ip addr 192.168.2.98 255.255.255.224
+standby version 2
+standby 50 ip 192.168.2.97
+standby 50 priority 90
+standby 50 preempt
+ex
+
+int vlan 60
+ip helper-address 10.10.10.10
+ip addr 192.168.2.130 255.255.255.224
+standby version 2
+standby 60 ip 192.168.2.129
+standby 60 priority 90
+standby 60 preempt
+ex
+
+==========Distribution Switch 2
+int vlan 10
+ip helper-address 10.10.10.10
+ip addr 192.168.2.3 255.255.255.224
+standby version 2
+standby 10 ip 192.168.2.1
+standby 10 priority 90
+standby 10 preempt
+ex
+
+int vlan 20
+ip helper-address 10.10.10.10
+ip addr 192.168.2.35 255.255.255.224
+standby version 2
+standby 20 ip 192.168.2.33
+standby 20 priority 90
+standby 20 preempt
+ex
+
+int vlan 30
+ip helper-address 10.10.10.10
+ip addr 192.168.2.67 255.255.255.224
+standby version 2
+standby 30 ip 192.168.2.65
+standby 30 priority 90
+standby 30 preempt
+ex
+
+
+int vlan 50
+ip helper-address 10.10.10.10
+ip addr 192.168.2.99 255.255.255.224
+standby version 2
+standby 50 ip 192.168.2.97
+standby 50 priority 110
+standby 50 preempt
+ex
+
+int vlan 60
+ip helper-address 10.10.10.10
+ip addr 192.168.2.131 255.255.255.224
+standby version 2
+standby 60 ip 192.168.2.129
+standby 60 priority 110
+standby 60 preempt
+ex
+
+=======================
+ETHERCHANNEL CONFIG
+======================
+
+==========Distribution Switch 1
+int range fa0/2-fa0/3
+no switchport
+channel-group 1 mode active
+ex
+
+int port1
+ip addr 10.0.0.1 255.255.255.252
+ex
+do wr
+
+==============Distribution switch 2
+int range fa0/2-fa0/3
+no switchport
+channel-group 1 mode active
+ex
+
+int port1
+ip addr 10.0.0.2 255.255.255.252
+ex
+do wr
+
+
+=======================================
+DISTRIBUTION TO ROUTER LINK ADDRESSING
+=======================================
+
+==========Distribution 1
+int fa0/1
+ip address 10.0.0.9 255.255.255.252
+ex
+
+=========Distribution 2
+int fa0/1
+no switchport
+ip address 10.0.0.5 255.255.255.252
+ex
+
+
+=============Router
+int fa1/0
+no switchport
+ip address 10.0.0.6 255.255.255.252
+ex
+
+int fa0/0
+ip address 10.0.0.10 255.255.255.252
+ex
+
+int loop0
+ip addr 10.10.10.10 255.255.255.255
+ex
+
+int fa1/1
+ip address 92.1.0.26 255.255.255.252
+ex
+
+do wr
+
+
+========================
+DHCP Config
+========================
+ip dhcp excluded-address 192.168.2.1 192.168.2.5
+ip dhcp excluded-address 192.168.2.33 192.168.2.36
+ip dhcp excluded-address 192.168.2.65 192.168.2.68
+ip dhcp excluded-address 192.168.2.97 192.168.2.100
+ip dhcp excluded-address 192.168.2.129 192.168.2.132
+
+
+ip dhcp pool Admin 
+network 192.168.2.0 255.255.255.224
+default-router 192.168.2.1
+dns-server 192.168.1.134
+
+ip dhcp pool Sales 
+network 192.168.2.32 255.255.255.224
+default-router 192.168.2.33
+dns-server 192.168.1.134
+
+ip dhcp pool IT 
+network 192.168.2.64 255.255.255.224
+default-router 192.168.2.65
+dns-server 192.168.1.134
+
+ip dhcp pool CCTV 
+network 192.168.2.96 255.255.255.224
+default-router 192.168.2.97
+dns-server 192.168.1.134
+
+ip dhcp pool VOIP 
+network 192.168.2.128 255.255.255.224
+default-router 192.168.2.129
+dns-server 192.168.1.134
+option 150 ip 92.1.0.2
+
+
+
+
+===========================
+INTERNAL ROUTING : OSPF
+===========================
+
+==========Distribution  Switch 1
+router ospf 1
+network 192.168.2.0 0.0.0.31 area 0
+network 192.168.2.32 0.0.0.31 area 0
+network 192.168.2.64 0.0.0.31 area 0
+network 192.168.2.96 0.0.0.31 area 0
+network 192.168.2.128 0.0.0.31 area 0
+network 10.0.0.0 0.0.0.3 area 0
+network 10.0.0.8 0.0.0.3 area 0
+
+
+==========Distribution  Switch 2
+router ospf 1
+network 192.168.2.0 0.0.0.31 area 0
+network 192.168.2.32 0.0.0.31 area 0
+network 192.168.2.64 0.0.0.31 area 0
+network 192.168.2.96 0.0.0.31 area 0
+network 192.168.2.128 0.0.0.31 area 0
+network 10.0.0.0 0.0.0.3 area 0
+network 10.0.0.4 0.0.0.3 area 0
+
+============Router
+router ospf 1
+network 10.0.0.4 0.0.0.3 area 0
+network 10.0.0.8 0.0.0.3 area 0
+network 10.10.10.10 0.0.0.0 area 0
+network 92.1.0.24 0.0.0.3 area 0
+network 10.0.1.0 0.0.0.3 area 0
+
+
+================
+VPN Config
+================
+
+ip access-list extended SwiftMartVPN
+	permit ip 192.168.2.0 0.0.0.255 192.168.1.0 0.0.0.255
+
+crypto isakmp policy 10
+ encryption aes
+ hash sha
+ authentication pre-share
+ group 2
+ lifetime 86400
+
+crypto isakmp key swiftmartcore address 92.1.0.2
+
+crypto ipsec transform-set SwiftMartVPN-SET esp-aes esp-sha-hmac
+
+crypto map SwiftMartVPN-MAP 10 ipsec-isakmp
+ set peer 92.1.0.2
+ set transform-set SwiftMartVPN-SET
+ match address SwiftMartVPN
+
+
+int fa1/1
+crypto map SwiftMartVPN-MAP
+
+
+
+
+==========================
+GRE TUNNEL CONFIG
+==========================
+int tunnel0
+ip address 10.0.1.2 255.255.255.252
+tunnel source fa0/0
+tunnel destination 92.1.0.2
+
+
+==================
+NAT CONFIG
+==================
+int fa1/1
+ip nat outside
+ex
+
+int fa0/0
+ip nat inside
+ex
+
+int fa1/0
+ip nat inside
+ex
+
+access-list 1 permit 192.168.2.0 0.0.0.255
+
+ip nat inside source list 1 int fa1/1 overload
+
+ip route 0.0.0.0 0.0.0.0 92.1.0.25

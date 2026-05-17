@@ -1,0 +1,718 @@
+HQ Devices Configs
+
+=================
+VLAN Creation
+=================
+vlan 10
+name Admin
+ex
+
+vlan 20
+name Sales
+ex
+
+vlan 30
+name IT
+ex
+
+vlan 40
+name Servers
+ex
+
+vlan 50
+name CCTV
+ex
+
+vlan 60
+name VOIP
+ex
+
+
+===================================
+Access Layer Interface Assignment
+===================================
+=========Trunk
+int range fa0/1-fa0/2
+switchport mode trunk
+
+=========CCTV
+int Fa0/3
+switchport mode access 
+switchport access vlan 50
+switchport port-security
+switchport port-security maximum 1
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+ex
+
+=======VoIP
+int fa0/24
+switchport voice vlan 60
+switchport mode access
+switchport port-security
+switchport port-security maximum 2
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+ex
+
+====Admin
+int range fa0/4-fa0/10
+switchport mode access
+switchport access vlan 10
+switchport port-security
+switchport port-security maximum 1
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+ex
+
+======Sales
+int range fa0/4-fa0/10
+switchport mode access
+switchport access vlan 20
+switchport port-security
+switchport port-security maximum 1
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+ex
+
+=======IT
+int range fa0/4-fa0/10
+switchport mode access
+switchport access vlan 30
+switchport port-security
+switchport port-security maximum 1
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+ex
+
+=======Servers
+int range fa0/4-fa0/7
+switchport mode access
+switchport access vlan 40
+switchport port-security
+switchport port-security maximum 1
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+ex
+
+
+===================
+EtherChannel [LACP]
+===================
+int range fa0/1-fa0/3
+no switchport
+channel-group 1 mode active
+
+int range fa0/4-fa0/5
+no switchport
+channel-group 2 mode active
+
+int range fa0/6-fa0/7
+no switchport
+channel-group 3 mode active
+
+
+================
+SVIS and HSRP
+================
+
+=======Distribution Switch 1
+int vlan 10
+ip helper-address 192.168.1.135
+ip addr 192.168.1.2 255.255.255.224
+standby version 2
+standby 10 ip 192.168.1.1
+standby 10 priority 110
+standby 10 preempt
+ex
+
+int vlan 20
+ip helper-address 192.168.1.135
+ip addr 192.168.1.34 255.255.255.224
+standby version 2
+standby 20 ip 192.168.1.33
+standby 20 priority 110
+standby 20 preempt
+ex
+
+int vlan 30
+ip helper-address 192.168.1.135
+ip addr 192.168.1.66 255.255.255.224
+standby version 2
+standby 30 ip 192.168.1.65
+standby 30 priority 110
+standby 30 preempt
+ex
+
+int vlan 40
+ip helper-address 192.168.1.135
+ip addr 192.168.1.130 255.255.255.224
+standby version 2
+standby 40 ip 192.168.1.129
+standby 40 priority 110
+standby 40 preempt
+ex
+
+int vlan 50
+ip helper-address 192.168.1.135
+ip addr 192.168.1.98 255.255.255.224
+standby version 2
+standby 50 ip 192.168.1.97
+standby 50 priority 110
+standby 50 preempt
+ex
+
+int vlan 60
+ip helper-address 192.168.1.135
+ip addr 192.168.1.162 255.255.255.224
+standby version 2
+standby 60 ip 192.168.1.161
+standby 60 priority 110
+standby 60 preempt
+ex
+
+==========Distribution Switch 2
+int vlan 10
+ip helper-address 192.168.1.135
+ip addr 192.168.1.3 255.255.255.224
+standby version 2
+standby 10 ip 192.168.1.1
+standby 10 priority 90
+standby 10 preempt
+ex
+
+int vlan 20
+ip helper-address 192.168.1.135
+ip addr 192.168.1.35 255.255.255.224
+standby version 2
+standby 20 ip 192.168.1.33
+standby 20 priority 90
+standby 20 preempt
+ex
+
+int vlan 30
+ip helper-address 192.168.1.135
+ip addr 192.168.1.67 255.255.255.224
+standby version 2
+standby 30 ip 192.168.1.65
+standby 30 priority 90
+standby 30 preempt
+ex
+
+int vlan 40
+ip helper-address 192.168.1.135
+ip addr 192.168.1.131 255.255.255.224
+standby version 2
+standby 40 ip 192.168.1.129
+standby 40 priority 90
+standby 40 preempt
+ex
+
+int vlan 50
+ip helper-address 192.168.1.135
+ip addr 192.168.1.99 255.255.255.224
+standby version 2
+standby 50 ip 192.168.1.97
+standby 50 priority 90
+standby 50 preempt
+ex
+
+int vlan 60
+ip helper-address 192.168.1.135
+ip addr 192.168.1.163 255.255.255.224
+standby version 2
+standby 60 ip 192.168.1.161
+standby 60 priority 90
+standby 60 preempt
+ex
+
+
+============================================
+PortChannel and Routing Ports IP Addressing
+============================================
+
+===========Distribution Switch 1
+=================================
+int po1
+ip addr 10.0.0.1 255.255.255.252
+ex
+
+int po2
+ip addr 10.0.0.17 255.255.255.252
+ex
+
+============Distribution Switch 2
+=================================
+int po1
+ip addr 10.0.0.5 255.255.255.252
+ex
+
+int po2
+ip addr 10.0.0.13 255.255.255.252
+ex
+
+=============Core Switch 1
+==========================
+int po1
+ip addr 10.0.0.2 255.255.255.252
+ex
+
+int po2
+ip addr 10.0.0.14 255.255.255.252
+ex
+
+int po3
+ip addr 10.0.0.9 255.255.255.252
+ex
+
+int fa0/8
+no switchport
+ip addr 10.0.0.21 255.255.255.252
+ex
+
+===============Core Switch 2
+=============================
+int po1
+ip addr 10.0.0.6 255.255.255.252
+ex
+
+int po2
+ip addr 10.0.0.18 255.255.255.252
+ex
+
+int po3
+ip addr 10.0.0.10 255.255.255.252
+ex
+
+int fa0/8
+no switchport
+ip addr 10.0.0.25 255.255.255.252
+ex
+
+
+
+
+======================================
+OSPF ROUTING CONFIG FOR ALL HQ L3 DEVICES
+======================================
+
+=========Distr Switch 1
+router ospf 1 
+network 192.168.1.0 0.0.0.31 area 0
+network 192.168.1.32 0.0.0.31 area 0
+network 192.168.1.64 0.0.0.31 area 0
+network 192.168.1.96 0.0.0.31 area 0
+network 192.168.1.128 0.0.0.31 area 0
+network 192.168.1.160 0.0.0.31 area 0
+network 10.0.0.0 0.0.0.3 area 0
+network 10.0.0.16 0.0.0.3 area 0
+
+=========Distr Switch 2
+router ospf 1 
+network 192.168.1.0 0.0.0.31 area 0
+network 192.168.1.32 0.0.0.31 area 0
+network 192.168.1.64 0.0.0.31 area 0
+network 192.168.1.96 0.0.0.31 area 0
+network 192.168.1.128 0.0.0.31 area 0
+network 192.168.1.160 0.0.0.31 area 0
+network 10.0.0.12 0.0.0.3 area 0
+network 10.0.0.4 0.0.0.3 area 0
+
+=========Core Switch 1
+router ospf 1
+network 10.0.0.0 0.0.0.3 area 0
+network 10.0.0.12 0.0.0.3 area 0
+network 10.0.0.8 0.0.0.3 area 0
+network 10.0.0.20 0.0.0.3 area 0
+
+=========Core Switch 2
+router ospf 1
+network 10.0.0.4 0.0.0.3 area 0
+network 10.0.0.8 0.0.0.3 area 0
+network 10.0.0.16 0.0.0.3 area 0
+network 10.0.0.24 0.0.0.3 area 0
+
+
+=====================
+HQ Router Configs
+=====================
+
+============Interface IP Addressing
+int fa0/0
+ip addr 10.0.0.22 255.255.255.252
+ex
+
+int fa0/1
+ip addr 10.0.0.26 255.255.255.252
+ex
+
+int fa1/0
+ip addr 92.1.0.2 255.255.255.252
+ex
+
+int lo0
+ip addr 1.1.1.1 255.255.255.255
+ex
+
+
+=============OSPF Routing
+router ospf 1
+network 10.0.0.20 0.0.0.3 area 0
+network 10.0.0.24 0.0.0.3 area 0
+network 1.1.1.1 0.0.0.0 area 0
+network 92.1.0.0 0.0.0.3 area 0
+network 10.0.1.0 0.0.0.3 area 1
+ex
+ip route 0.0.0.0 0.0.0.0 92.1.0.1
+
+
+
+=============VOIP
+telephony-service
+ip source-address 1.1.1.1 port 2000
+max-ephone 10
+max-dn 15
+auto assign 1 to 15
+ex
+
+ephone-dn 1
+number 210
+ephone-dn 2
+number 211
+ephone-dn 3
+number 212
+ephone-dn 4
+number 213
+ephone-dn 5
+number 214
+ephone-dn 6
+number 215
+ephone-dn 7
+number 216
+ephone-dn 8
+number 217
+
+
+=============NAT CONFIG
+access-list 1 permit 192.168.1.0 0.0.0.255
+
+int fa1/0
+ip nat outside
+ex
+
+int fa0/0
+ip nat inside
+ex
+
+int fa0/1
+ip nat inside
+ex
+
+ip nat inside source list 1 int fa1/0 overload
+
+ip route 0.0.0.0 0.0.0.0 92.1.0.1
+
+
+================GRE TUNNEL CONFIG
+int tunnel0
+ip address 10.0.1.1 255.255.255.252
+tunnel source fa0/0
+tunnel destination 92.1.0.26
+
+
+===========DHCP FOR IT
+ip dhcp pool IT
+network 192.168.1.64
+
+
+
+===========================================
+ACLS FOR TRAFFIC SEPARATION AND PROTECTION
+===========================================
+
+=============DISTRIBUTION SWITCH 1
+
+
+=======ADMIN VLAN
+
+ip access-list extended ADMIN-IN
+
+remark ===== DHCP =====
+permit udp any eq bootpc host 192.168.1.135 eq bootps
+
+remark ===== DNS =====
+permit udp any host 192.168.1.134 eq 53
+permit tcp any host 192.168.1.134 eq 53
+
+remark ===== EMAIL =====
+permit tcp any host 192.168.1.137
+
+remark ===== INTERNAL APPS =====
+permit tcp any host 192.168.1.137 eq 80
+permit tcp any host 192.168.1.137 eq 443
+
+remark ===== IT/IT-ADMIN FULL ACCESS =====
+permit ip 192.168.1.64 0.0.0.31 any
+permit ip 192.168.1.192 0.0.0.31 any
+
+remark ===== BLOCK INTERNAL VLANS =====
+deny ip any 192.168.1.32 0.0.0.31
+deny ip any 192.168.1.96 0.0.0.31
+deny ip any 192.168.1.160 0.0.0.31
+
+
+remark ===== BLOCK BRANCH NETWORKS =====
+deny ip any 192.168.2.0 0.0.0.255
+
+remark ===== INTERNET ACCESS =====
+permit ip any any
+
+int vlan 10
+ip access-group ADMIN-IN in
+
+
+
+========SALES VLAN
+
+ip access-list extended SALES-IN
+
+remark ===== DHCP =====
+permit udp any eq bootpc host 192.168.1.135 eq bootps
+
+remark ===== DNS =====
+permit udp any host 192.168.1.134 eq 53
+permit tcp any host 192.168.1.134 eq 53
+
+remark ===== EMAIL =====
+permit tcp any host 192.168.1.137
+
+remark ===== IT/IT-ADMIN FULL ACCESS =====
+permit ip 192.168.1.64 0.0.0.31 any
+permit ip 192.168.1.192 0.0.0.31 any
+
+remark ===== INTERNAL APPS =====
+permit tcp any host 192.168.1.137 eq 80
+permit tcp any host 192.168.1.137 eq 443
+
+remark ===== BLOCK INTERNAL VLANS =====
+deny ip any 192.168.1.0 0.0.0.31
+deny ip any 192.168.1.96 0.0.0.31
+deny ip any 192.168.1.160 0.0.0.31
+
+
+remark ===== BLOCK BRANCH NETWORKS =====
+deny ip any 192.168.2.0 0.0.0.255
+
+remark ===== INTERNET ACCESS =====
+permit ip any any
+
+int vlan 20
+ip access-group SALES-IN in
+
+
+
+
+========IT VLAN
+
+ip access-list extended IT-IN
+
+remark =====BLOCK ACCESS TO CCTV ==========
+deny ip any 192.168.1.96 0.0.0.31
+
+remark ======DENY ACCESS TO IT-ADMIN ========
+deny ip any 192.168.1.192 0.0.0.31
+
+remark ===== FULL ACCESS TO EVERYTHING ELSE =====
+permit ip any any
+
+
+int vlan 30
+ip access-group IT-IN in
+
+
+========IT-ADMIN VLAN
+
+ip access-list extended IT-ADMIN-IN
+
+remark ===== FULL ACCESS =====
+permit ip any any
+
+int vlan 70
+ip access-group IT-ADMIN-IN in
+
+
+
+
+=========CCTV VLAN 
+
+ip access-list extended CCTV-IN
+
+remark ===== ALLOW VMS SERVER =====
+permit ip any host 192.168.1.136
+
+remark =====PERMIT IT-ADMIN ACCESS
+permit ip 192.168.1.192 0.0.0.31 any
+
+remark ===== DENY EVERYTHING ELSE =====
+deny ip any any
+
+int vlan 50
+ip access-group CCTV-IN in
+
+
+
+=========VoIP VLAN
+
+ip access-list extended VOIP-IN
+
+remark ===== DHCP =====
+permit udp any eq bootpc host 192.168.1.135 eq bootps
+
+remark ===== DNS =====
+permit udp any host 192.168.1.134 eq 53
+
+remark ===== SIP =====
+permit udp any host 1.1.1.1 eq 5060
+permit tcp any host 1.1.1.1 eq 5060
+
+remark ===== RTP =====
+permit udp any range 16384 32767
+
+remark ===== IT/IT-ADMIN FULL ACCESS =====
+permit ip 192.168.1.64 0.0.0.31 any
+permit ip 192.168.1.192 0.0.0.31 any
+
+remark ===== BLOCK EVERYTHING ELSE =====
+deny ip any any
+
+int vlan 60
+ip access-group VOIP-IN in
+
+
+
+==========SERVERS VLAN
+
+ip access-list extended SERVER-IN
+
+remark ===== DNS =====
+permit udp any host 192.168.1.134 eq 53
+permit tcp any host 192.168.1.134 eq 53
+
+remark ===== EMAIL =====
+permit tcp any host 192.168.1.137
+
+remark ===== INTERNAL APPS =====
+permit tcp any host 192.168.1.137 eq 80
+permit tcp any host 192.168.1.137 eq 443
+
+remark ===== IT/IT-ADMIN FULL ACCESS =====
+permit ip 192.168.1.64 0.0.0.31 any
+permit ip 192.168.1.192 0.0.0.31 any
+
+remark ===== CCTV TO VMS =====
+permit ip 192.168.1.96 0.0.0.31 host 192.168.1.136
+
+remark ===== DENY EVERYTHING ELSE =====
+deny ip any any
+
+int vlan 40
+ip access-group SERVERS-IN in
+
+
+
+
+
+================
+VPN Config
+================
+
+ip access-list extended SwiftMartVPN
+	permit ip 192.168.1.0 0.0.0.255 192.168.2.0 0.0.0.255
+
+crypto isakmp policy 10
+ encryption aes
+ hash sha
+ authentication pre-share
+ group 2
+ lifetime 86400
+
+crypto isakmp key swiftmartcore address 92.1.0.26
+
+crypto ipsec transform-set SwiftMartVPN-SET esp-aes esp-sha-hmac
+
+crypto map SwiftMartVPN-MAP 10 ipsec-isakmp
+ set peer 92.1.0.26
+ set transform-set SwiftMartVPN-SET
+ match address SwiftMartVPN
+
+
+int fa1/0
+crypto map SwiftMartVPN-MAP
+
+
+
+
+
+
+
+
+
+
+
+===============================================
+ADDITIONAL CONFIGURATIONS TO SOLVE SOME ISSUES
+===============================================
+
+vlan 70
+name IT-admin
+ex
+
+int vlan 70
+ip addr 192.168.1.194 255.255.255.224
+ip helper-address 192.168.1.135
+standby version 2
+standby 70 ip 192.168.1.193
+standby 70 priority 110
+standby 70 preempt
+
+int vlan 70
+ip addr 192.168.1.195 255.255.255.224
+standby version 2
+standby 70 ip 192.168.1.193
+standby 70 priority 90
+standby 70 preempt
+
+
+vlan 70
+name IT-Admin
+ex
+
+int range fa0/11-fa0/15
+switchport mode access
+switchport access vlan 70
+no shut	
+
+ip dhcp excluded-address 192.168.1.193 192.168.1.196
+
+ip dhcp pool IT-Admin
+network 192.168.1.192 255.255.255.224
+default-router 192.168.1.193
+dns-server 192.168.1.134
+ex
+
+ip dhcp excluded-address 192.168.1.65 192.168.1.68
+ip dhcp pool IT
+network 192.168.1.64 255.255.255.224
+default-router 192.168.1.65
+dns-server 192.168.1.134
+ex
+
+
+router ospf 1
+network 192.168.1.192 0.0.0.31 area 0
+network 192.168.1.64  0.0.0.31 area 0
+
+
+
+
+

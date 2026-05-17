@@ -1,0 +1,135 @@
+=====================
+==========ISP A
+
+=======Interface Addressing
+int gig0/0
+ip addr 92.1.0.5 255.255.255.252
+ex
+
+int gig1/0
+ip addr 92.1.0.9 255.255.255.252
+ex
+
+int gig2/0
+ip addr 92.1.0.1 255.255.255.252
+ex
+
+int loop0
+ip addr 2.2.2.2 255.255.255.255
+ex
+do wr
+
+=======OSPF
+router ospf 1
+network 92.1.0.0 0.0.0.3 area 0
+redistribute bgp 65001 subnets
+ex
+
+========BGP
+router bgp 65001
+neighbor 92.1.0.10 remote-as 65003
+neighbor 92.1.0.6 remote-as 65002
+network 92.1.0.0 mask 255.255.255.252
+redistribute ospf 1
+
+========================
+==============ISP B
+
+========Interface Addressing
+int gig0/0
+ip addr 92.1.0.6 255.255.255.252
+ex
+
+int gig1/0
+ip addr 92.1.0.17 255.255.255.252
+ex
+
+int gig2/0
+ip addr 92.1.0.13 255.255.255.252
+ex
+
+int gig3/0
+ip addr 192.168.5.1 255.255.255.0
+ex
+
+int loop0
+ip addr 3.3.3.3 255.255.255.255
+ex
+do wr
+
+=======BGP
+router bgp 65002
+neighbor 92.1.0.5 remote-as 65001
+neighbor 92.1.0.14 remote-as 65003
+neighbor 92.1.0.18 remote-as 65004
+network 192.168.5.0 mask 255.255.255.0
+ex
+do wr
+
+
+========================
+==============ISP C
+
+========Interface Addressing
+int gig0/0
+ip addr 92.1.0.10 255.255.255.252
+ex
+
+int gig1/0
+ip addr 92.1.0.21 255.255.255.252
+ex
+
+int gig2/0
+ip addr 92.1.0.14 255.255.255.252
+ex
+
+int loop0
+ip addr 4.4.4.4 255.255.255.255
+ex
+do wr
+
+
+========BGP
+router bgp 65003
+neighbor 92.1.0.9 remote-as 65001
+neighbor 92.1.0.13 remote-as 65002
+neighbor 92.1.0.22 remote-as 65004
+ex
+do wr
+
+=======================
+==============ISP D
+
+=========Interface Addressing
+int gig0/0
+ip addr 92.1.0.22 255.255.255.252
+ex
+
+int gig1/0
+ip addr 92.1.0.18 255.255.255.252
+ex
+
+int gig2/0
+ip addr 92.1.0.25 255.255.255.252
+ex
+
+int loop0
+ip addr 5.5.5.5 255.255.255.255
+ex
+do wr
+
+
+=========OSPF
+router ospf 1
+network 92.1.0.24 0.0.0.3 area 0
+redistribute bgp 65004 subnets
+ex
+
+=========BGP
+router bgp 65004
+neighbor 92.1.0.17 remote-as 65002
+neighbor 92.1.0.21 remote-as 65003
+network 92.1.0.24 mask 255.255.255.252
+redistribute ospf 1
+ex
+do wr
