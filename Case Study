@@ -1,1 +1,204 @@
+CASE STUDY
 
+DESIGN AND IMPLEMENTATION OF A SECURE ENTERPRISE NETWORK FOR SWIFTMART LTD
+
+
+1.0 INTRODUCTION
+
+SwiftMart Ltd is a medium-scale retail and distribution company involved in the supply of packaged food items,
+household products, and electronic accessories across multiple locations in Nigeria. 
+The organization currently operates a Head Office located in Lagos and a branch warehouse office located in Ibadan.
+As the company expanded its operations, the existing network infrastructure became insufficient to support secure 
+communication, centralized management, departmental segmentation, and efficient inter-office connectivity. 
+The absence of proper network segmentation exposed the organization to security risks, excessive broadcast traffic, 
+poor scalability, and inefficient resource management.
+To address these challenges, SwiftMart Ltd initiated a network redesign project aimed at building a secure, scalable, 
+and efficient enterprise network infrastructure capable of 
+supporting present operational demands and future expansion.
+
+
+2.0 PROJECT AIM
+
+The aim of this project is to design and implement a secure enterprise network infrastructure for SwiftMart Ltd that provides:
+
+Secure communication between branch offices
+Departmental network segmentation
+Centralized resource access
+Controlled inter-VLAN communication
+Reliable WAN connectivity
+Improved network security and scalability
+
+
+3.0 PROJECT OBJECTIVES
+
+The objectives of the project include:
+
+1. To implement VLAN-based departmental segmentation.
+
+2. To establish secure communication between HQ and branch offices.
+
+3. To implement dynamic routing for efficient route advertisement.
+
+4. To configure controlled access between departments using ACLs.
+
+5. To deploy centralized services such as DHCP and internal servers.
+
+6. To improve network security using enterprise security practices.
+
+7. To provide scalable infrastructure for future expansion.
+
+
+
+4.0 COMPANY OPERATIONAL STRUCTURE
+
+SwiftMart Ltd operates through several departments that rely heavily on network services for daily business activities.
+
+
+4.1 Administration Department
+
+The Administration department consists of:
+
+Chief Executive Officer (CEO)
+
+Human resources personnel
+
+Account officers
+
+Secretaries
+
+
+Responsibilities
+
+Staff management
+
+Financial operations
+
+Internal communication
+
+Approval workflows
+
+
+Network Requirements
+
+Internet access
+
+Email access
+
+Access to internal applications
+
+Secure and stable connectivity
+
+
+4.2 Sales Department
+
+The Sales department handles:
+
+Customer orders
+
+Inventory requests
+
+Sales reporting
+
+Customer communication
+
+
+Sales personnel rely on a centralized ERP application hosted at the Head Office.
+
+Network Requirements
+
+Reliable server access
+
+Internet connectivity
+
+Access to internal inventory systems
+
+
+4.3 Information Technology (IT) Department
+
+The IT department is responsible for:
+
+Network administration
+
+Device management
+
+Security monitoring
+
+Troubleshooting
+
+Server management
+
+
+Network Requirements
+
+Full access to all VLANs
+
+SSH access to routers and switches
+
+Access to CCTV systems
+
+Monitoring and maintenance capabilities
+
+
+Due to operational responsibilities, the IT department possesses elevated network privileges compared to other departments.
+
+
+4.4 CCTV and Surveillance Unit
+
+The company maintains CCTV surveillance systems at:
+
+Entrances
+
+Warehouses
+
+Server rooms
+
+Administrative areas
+
+
+Network Requirements
+
+Isolated surveillance traffic
+
+Secure monitoring access
+
+Stable bandwidth allocation
+
+
+To improve security, CCTV systems are placed in a separate VLAN accessible only by authorized IT personnel.
+
+
+4.5 Warehouse Branch Operations
+
+The Ibadan branch office serves as:
+
+A warehouse facility
+
+A dispatch coordination center
+
+A local sales office
+
+
+The branch continuously exchanges operational data with the HQ.
+
+Network Requirements
+
+Reliable WAN communication
+
+Secure data transfer
+
+Real-time inventory synchronization
+
+
+5.0 EXISTING NETWORK CHALLENGES
+
+Prior to redesign, the organization experienced several network-related issues:
+
+S/N	Challenge	                         Effect
+
+1	Flat network structure 	Excessive broadcast traffic
+2	Lack of VLAN segmentation	Poor security
+3	No WAN encryption	             Risk of data interception
+4	Manual IP assignment	IP conflicts
+5	Unrestricted access	             Unauthorized resource usage
+6	Shared surveillance traffic	Reduced network performance
+7	Lack of centralized routing	Poor scalability
