@@ -1,1 +1,1790 @@
-This Webpage is made with Claude AI
+//This Webpage is made with Claude AI
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SwiftMart — Store Management System</title>
+<style>
+  /* All fonts are system fonts — no external resources needed */
+  :root {
+    --bg: #0d0f14;
+    --surface: #161920;
+    --surface2: #1e2230;
+    --surface3: #252a3a;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #e8eaf0;
+    --text2: #8b91a8;
+    --text3: #555c72;
+    --accent: #4fffb0;
+    --accent2: #00d4ff;
+    --accent3: #ff6b6b;
+    --accent4: #ffd166;
+    --accent5: #a78bfa;
+    --accent-dim: rgba(79,255,176,0.12);
+    --accent2-dim: rgba(0,212,255,0.12);
+    --accent3-dim: rgba(255,107,107,0.12);
+    --accent4-dim: rgba(255,209,102,0.12);
+    --accent5-dim: rgba(167,139,250,0.12);
+    --radius: 10px;
+    --radius-lg: 16px;
+    /* System font stacks — fully offline, no CDN needed */
+    --font-display: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    --font-body:    'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono:    'Cascadia Code', 'Fira Code', 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
+    --sidebar-w: 220px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    display: flex;
+    height: 100vh;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+  }
+  .logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-mark {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo-mark span { color: var(--text); }
+  .logo-sub { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: var(--font-mono); letter-spacing: 0.5px; }
+  .nav { padding: 12px 8px; flex: 1; }
+  .nav-group { margin-bottom: 20px; }
+  .nav-group-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text3);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 0 12px;
+    margin-bottom: 6px;
+    font-family: var(--font-mono);
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    color: var(--text2);
+    font-size: 13.5px;
+    font-weight: 400;
+    transition: all 0.15s;
+    position: relative;
+    user-select: none;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: var(--accent-dim); color: var(--accent); }
+  .nav-item.active .nav-icon { color: var(--accent); }
+  .nav-icon { font-size: 16px; width: 18px; text-align: center; flex-shrink: 0; }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--accent3);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-family: var(--font-mono);
+  }
+  .sidebar-footer {
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .user-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent5), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; color: #fff; flex-shrink: 0;
+  }
+  .user-info { flex: 1; min-width: 0; }
+  .user-name { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-role { font-size: 11px; color: var(--text3); }
+
+  /* ── MAIN ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .topbar {
+    height: 58px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+  .topbar-title { font-family: var(--font-display); font-weight: 700; font-size: 18px; flex: 1; }
+  .topbar-date { font-size: 12px; color: var(--text3); font-family: var(--font-mono); }
+  .search-box {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 7px 14px;
+    width: 220px;
+  }
+  .search-box input {
+    background: none; border: none; outline: none;
+    color: var(--text); font-size: 13px; font-family: var(--font-body); width: 100%;
+  }
+  .search-box input::placeholder { color: var(--text3); }
+  .icon-btn {
+    width: 34px; height: 34px; border-radius: var(--radius);
+    background: var(--surface2); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--text2); font-size: 16px;
+    transition: all 0.15s;
+  }
+  .icon-btn:hover { border-color: var(--border2); color: var(--text); background: var(--surface3); }
+  .notif-dot { position: relative; }
+  .notif-dot::after {
+    content: ''; position: absolute; top: 6px; right: 6px;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent3); border: 2px solid var(--surface);
+  }
+
+  .content { flex: 1; overflow-y: auto; padding: 24px; }
+  .content::-webkit-scrollbar { width: 4px; }
+  .content::-webkit-scrollbar-track { background: transparent; }
+  .content::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 4px; }
+
+  /* ── VIEWS ── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+  }
+  .card-sm { padding: 16px; border-radius: var(--radius); }
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  }
+  .stat-card.green::before { background: var(--accent); }
+  .stat-card.blue::before { background: var(--accent2); }
+  .stat-card.red::before { background: var(--accent3); }
+  .stat-card.yellow::before { background: var(--accent4); }
+  .stat-card.purple::before { background: var(--accent5); }
+  .stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; font-family: var(--font-mono); margin-bottom: 10px; }
+  .stat-value { font-family: var(--font-display); font-size: 28px; font-weight: 700; line-height: 1; margin-bottom: 8px; }
+  .stat-delta { font-size: 12px; color: var(--text2); }
+  .stat-delta .up { color: var(--accent); }
+  .stat-delta .dn { color: var(--accent3); }
+  .stat-icon {
+    position: absolute; right: 16px; top: 16px;
+    font-size: 28px; opacity: 0.15;
+  }
+
+  /* ── GRIDS ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; padding: 10px 14px;
+    font-size: 11px; color: var(--text3);
+    font-family: var(--font-mono);
+    text-transform: uppercase; letter-spacing: 0.8px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+  td {
+    padding: 12px 14px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+  .tr-clickable { cursor: pointer; }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 500; font-family: var(--font-mono);
+  }
+  .badge-green { background: rgba(79,255,176,0.12); color: var(--accent); }
+  .badge-blue { background: rgba(0,212,255,0.12); color: var(--accent2); }
+  .badge-red { background: rgba(255,107,107,0.12); color: var(--accent3); }
+  .badge-yellow { background: rgba(255,209,102,0.12); color: var(--accent4); }
+  .badge-purple { background: rgba(167,139,250,0.12); color: var(--accent5); }
+  .badge-gray { background: var(--surface2); color: var(--text2); }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 18px; border-radius: var(--radius);
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    border: 1px solid transparent; transition: all 0.15s;
+    font-family: var(--font-body);
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--accent); color: #0d0f14; border-color: var(--accent); }
+  .btn-primary:hover { background: #3de8a0; }
+  .btn-ghost { background: transparent; color: var(--text2); border-color: var(--border2); }
+  .btn-ghost:hover { background: var(--surface2); color: var(--text); }
+  .btn-danger { background: var(--accent3-dim); color: var(--accent3); border-color: var(--accent3); }
+  .btn-danger:hover { background: var(--accent3); color: #fff; }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .btn-icon { padding: 9px; }
+
+  /* ── SECTION HEADER ── */
+  .section-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .section-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; }
+  .section-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+  /* ── CHART BAR ── */
+  .mini-bars { display: flex; align-items: flex-end; gap: 6px; height: 80px; margin-top: 12px; }
+  .mini-bar { flex: 1; border-radius: 4px 4px 0 0; min-height: 4px; transition: opacity 0.15s; cursor: pointer; }
+  .mini-bar:hover { opacity: 0.75; }
+  .bar-label { font-size: 10px; color: var(--text3); text-align: center; margin-top: 4px; font-family: var(--font-mono); }
+
+  /* ── PROGRESS ── */
+  .prog-wrap { margin-bottom: 14px; }
+  .prog-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .prog-label { font-size: 13px; }
+  .prog-val { font-size: 12px; color: var(--text2); font-family: var(--font-mono); }
+  .prog-track { height: 6px; background: var(--surface3); border-radius: 3px; overflow: hidden; }
+  .prog-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease; }
+
+  /* ── FORMS ── */
+  .form-group { margin-bottom: 16px; }
+  .form-label { display: block; font-size: 12px; color: var(--text2); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.5px; }
+  .form-control {
+    width: 100%; background: var(--surface2);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 9px 14px; color: var(--text); font-size: 13px;
+    font-family: var(--font-body); outline: none;
+    transition: border-color 0.15s;
+  }
+  .form-control:focus { border-color: var(--accent); }
+  select.form-control option { background: var(--surface2); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    display: none; align-items: center; justify-content: center;
+    z-index: 100; backdrop-filter: blur(4px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border2);
+    border-radius: var(--radius-lg); padding: 28px;
+    width: 560px; max-width: 95vw; max-height: 85vh; overflow-y: auto;
+    position: relative;
+  }
+  .modal-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+  .modal-close {
+    position: absolute; top: 20px; right: 20px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; width: 28px; height: 28px;
+    cursor: pointer; color: var(--text2); font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+
+  /* ── TOAST ── */
+  .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 200; display: flex; flex-direction: column; gap: 10px; }
+  .toast {
+    background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: var(--radius); padding: 12px 16px;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; min-width: 260px; max-width: 360px;
+    animation: slideIn 0.2s ease;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .toast.success { border-left: 3px solid var(--accent); }
+  .toast.error { border-left: 3px solid var(--accent3); }
+  .toast.info { border-left: 3px solid var(--accent2); }
+  @keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+  /* ── TABS ── */
+  .tabs { display: flex; gap: 2px; background: var(--surface2); border-radius: var(--radius); padding: 4px; margin-bottom: 20px; }
+  .tab { flex: 1; padding: 8px; text-align: center; font-size: 13px; cursor: pointer; border-radius: 6px; color: var(--text2); transition: all 0.15s; }
+  .tab.active { background: var(--surface3); color: var(--text); font-weight: 500; }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  /* ── TIMELINE ── */
+  .timeline { list-style: none; }
+  .tl-item { display: flex; gap: 14px; padding-bottom: 20px; position: relative; }
+  .tl-item:not(:last-child)::before { content: ''; position: absolute; left: 11px; top: 24px; bottom: 0; width: 1px; background: var(--border); }
+  .tl-dot { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 10px; margin-top: 1px; }
+  .tl-content { flex: 1; }
+  .tl-title { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+  .tl-time { font-size: 11px; color: var(--text3); font-family: var(--font-mono); }
+
+  /* ── STOCK INDICATOR ── */
+  .stock-bar { height: 4px; border-radius: 2px; background: var(--surface3); margin-top: 4px; overflow: hidden; }
+  .stock-fill { height: 100%; border-radius: 2px; }
+
+  /* ── CHIP ── */
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .chip {
+    padding: 5px 14px; border-radius: 20px; font-size: 12px;
+    border: 1px solid var(--border); color: var(--text2);
+    cursor: pointer; transition: all 0.15s; font-family: var(--font-mono);
+  }
+  .chip.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .chip:hover:not(.active) { border-color: var(--border2); color: var(--text); }
+
+  /* ── KPI RING ── */
+  .kpi-rings { display: flex; gap: 20px; justify-content: space-around; padding: 10px 0; }
+  .kpi-ring { text-align: center; }
+  .kpi-ring svg { transform: rotate(-90deg); }
+  .kpi-ring-label { font-size: 12px; color: var(--text2); margin-top: 8px; }
+  .kpi-ring-val { font-size: 16px; font-weight: 700; font-family: var(--font-display); margin-top: 2px; }
+
+  /* ── ORDER CARD ── */
+  .order-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+    margin-bottom: 10px; cursor: pointer; transition: all 0.15s;
+  }
+  .order-card:hover { border-color: var(--border2); background: var(--surface3); }
+  .order-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .order-id { font-family: var(--font-mono); font-size: 13px; color: var(--accent); font-weight: 500; }
+  .order-meta { display: flex; gap: 16px; font-size: 12px; color: var(--text2); }
+
+  /* ── DELIVERY MAP PLACEHOLDER ── */
+  .delivery-map {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); height: 200px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .map-grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 30px 30px;
+    opacity: 0.5;
+  }
+  .map-pin { position: absolute; font-size: 20px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+
+  /* ── PAYMENT ── */
+  .pay-method {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px; border: 1px solid var(--border);
+    border-radius: var(--radius); margin-bottom: 10px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .pay-method:hover { border-color: var(--border2); background: var(--surface2); }
+  .pay-method.selected { border-color: var(--accent); background: var(--accent-dim); }
+  .pay-icon { width: 40px; height: 28px; border-radius: 4px; background: var(--surface3); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .pay-info { flex: 1; }
+  .pay-name { font-size: 13px; font-weight: 500; }
+  .pay-detail { font-size: 11px; color: var(--text3); font-family: var(--font-mono); }
+
+  /* ── SCROLLBAR ── */
+  * { scrollbar-width: thin; scrollbar-color: var(--surface3) transparent; }
+  
+  /* ── FILTERS BAR ── */
+  .filters-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .filters-bar .form-control { width: auto; padding: 7px 12px; font-size: 12px; }
+
+  /* ── INVENTORY GRID ── */
+  .inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+  .inv-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px;
+    transition: all 0.15s; cursor: pointer;
+  }
+  .inv-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+  .inv-thumb {
+    width: 100%; height: 90px; background: var(--surface3);
+    border-radius: 6px; margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+  }
+  .inv-name { font-size: 13px; font-weight: 500; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .inv-sku { font-size: 11px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 8px; }
+  .inv-price { font-size: 16px; font-weight: 700; color: var(--accent); font-family: var(--font-display); }
+  .inv-stock { font-size: 11px; color: var(--text2); margin-top: 4px; }
+
+  /* ── ANALYTICS CHART (canvas replacement) ── */
+  .chart-container { position: relative; height: 180px; display: flex; align-items: flex-end; gap: 4px; padding: 10px 0 0; }
+  .chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+  .chart-bar-outer { width: 100%; background: var(--surface3); border-radius: 4px 4px 0 0; position: relative; overflow: hidden; }
+  .chart-bar-inner { width: 100%; border-radius: 4px 4px 0 0; position: absolute; bottom: 0; transition: height 0.8s ease; }
+  .chart-xlabel { font-size: 10px; color: var(--text3); font-family: var(--font-mono); }
+
+  /* ── LINE CHART ── */
+  .line-chart-wrap { position: relative; height: 160px; padding: 10px 0; }
+  .line-chart-wrap svg { width: 100%; height: 100%; overflow: visible; }
+
+  /* ── ALERTS ── */
+  .alert {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 16px; border-radius: var(--radius);
+    margin-bottom: 10px; border: 1px solid;
+  }
+  .alert-warn { background: var(--accent4-dim); border-color: rgba(255,209,102,0.3); }
+  .alert-danger { background: var(--accent3-dim); border-color: rgba(255,107,107,0.3); }
+  .alert-info { background: var(--accent2-dim); border-color: rgba(0,212,255,0.3); }
+  .alert-icon { font-size: 16px; margin-top: 1px; }
+  .alert-text { flex: 1; }
+  .alert-title { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+  .alert-desc { font-size: 12px; color: var(--text2); }
+
+  /* ── EMPTY STATE ── */
+  .empty { text-align: center; padding: 40px; color: var(--text3); }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.4; }
+  .empty-text { font-size: 14px; }
+
+  /* ── ANIMATION ── */
+  .fade-in { animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-green { background: var(--accent); }
+  .dot-red { background: var(--accent3); }
+  .dot-yellow { background: var(--accent4); }
+  .dot-blue { background: var(--accent2); }
+
+  .separator { height: 1px; background: var(--border); margin: 20px 0; }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:900px) {
+    .stat-grid { grid-template-columns: repeat(2,1fr); }
+    .two-col, .three-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">🛒 <span>SwiftMart<span style="color:var(--accent)">OS</span></span></div>
+    <div class="logo-sub">v2.5 · INTERNAL SYSTEM</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-group">
+      <div class="nav-group-label">Overview</div>
+      <div class="nav-item active" onclick="navigate('dashboard')">
+        <span class="nav-icon">📊</span> Dashboard
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Commerce</div>
+      <div class="nav-item" onclick="navigate('orders')">
+        <span class="nav-icon">📋</span> Orders
+        <span class="nav-badge" id="order-badge">7</span>
+      </div>
+      <div class="nav-item" onclick="navigate('inventory')">
+        <span class="nav-icon">📦</span> Inventory
+      </div>
+      <div class="nav-item" onclick="navigate('products')">
+        <span class="nav-icon">🏷️</span> Products
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Operations</div>
+      <div class="nav-item" onclick="navigate('delivery')">
+        <span class="nav-icon">🚚</span> Delivery
+      </div>
+      <div class="nav-item" onclick="navigate('payments')">
+        <span class="nav-icon">💳</span> Payments
+      </div>
+      <div class="nav-item" onclick="navigate('customers')">
+        <span class="nav-icon">👥</span> Customers
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Reports</div>
+      <div class="nav-item" onclick="navigate('analytics')">
+        <span class="nav-icon">📈</span> Analytics
+      </div>
+      <div class="nav-item" onclick="navigate('settings')">
+        <span class="nav-icon">⚙️</span> Settings
+      </div>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-avatar">AO</div>
+    <div class="user-info">
+      <div class="user-name">Adaeze Okafor</div>
+      <div class="user-role">Store Manager</div>
+    </div>
+    <span style="color:var(--text3);font-size:14px;cursor:pointer">•••</span>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbar-title">Dashboard</div>
+    <div class="search-box">
+      <span style="color:var(--text3);font-size:14px">🔍</span>
+      <input type="text" placeholder="Search products, orders…" id="global-search" oninput="globalSearch(this.value)">
+    </div>
+    <div class="icon-btn notif-dot" title="Notifications" onclick="showToast('3 new low-stock alerts','warn')">🔔</div>
+    <div class="icon-btn" title="Dark mode">🌙</div>
+    <div class="topbar-date" id="clock"></div>
+  </div>
+
+  <div class="content" id="main-content">
+
+    <!-- ── DASHBOARD ── -->
+    <div class="view active fade-in" id="view-dashboard">
+      <div class="stat-grid">
+        <div class="stat-card green">
+          <div class="stat-icon">💰</div>
+          <div class="stat-label">Today's Revenue</div>
+          <div class="stat-value" style="color:var(--accent)">₦847K</div>
+          <div class="stat-delta"><span class="up">↑ 12.4%</span> vs yesterday</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-icon">📋</div>
+          <div class="stat-label">Active Orders</div>
+          <div class="stat-value" style="color:var(--accent2)">142</div>
+          <div class="stat-delta"><span class="up">↑ 8</span> since last hour</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-icon">⚠️</div>
+          <div class="stat-label">Low Stock Items</div>
+          <div class="stat-value" style="color:var(--accent3)">23</div>
+          <div class="stat-delta"><span class="dn">↑ 5</span> need reorder</div>
+        </div>
+        <div class="stat-card yellow">
+          <div class="stat-icon">🚚</div>
+          <div class="stat-label">Deliveries Today</div>
+          <div class="stat-value" style="color:var(--accent4)">58</div>
+          <div class="stat-delta"><span class="up">92%</span> on-time rate</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <!-- Revenue Chart -->
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <div class="section-title">Weekly Revenue</div>
+              <div class="section-sub">This week vs last week</div>
+            </div>
+            <span class="badge badge-green">↑ 14.2%</span>
+          </div>
+          <div class="chart-container" id="rev-chart"></div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="card">
+          <div class="section-head">
+            <div class="section-title">Recent Orders</div>
+            <button class="btn btn-ghost btn-sm" onclick="navigate('orders')">View All</button>
+          </div>
+          <div id="dash-orders"></div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <!-- Top Products -->
+        <div class="card">
+          <div class="section-head">
+            <div class="section-title">Top Products</div>
+            <div class="section-sub">By units sold today</div>
+          </div>
+          <div id="top-products"></div>
+        </div>
+
+        <!-- Alerts -->
+        <div class="card">
+          <div class="section-head">
+            <div class="section-title">Alerts & Notifications</div>
+          </div>
+          <div class="alert alert-danger">
+            <div class="alert-icon">🔴</div>
+            <div class="alert-text">
+              <div class="alert-title">Critical: Rice (50kg) — Out of Stock</div>
+              <div class="alert-desc">Last restocked 18 days ago. Reorder immediately.</div>
+            </div>
+          </div>
+          <div class="alert alert-warn">
+            <div class="alert-icon">⚠️</div>
+            <div class="alert-text">
+              <div class="alert-title">Low Stock: Cooking Oil (5L) — 12 units left</div>
+              <div class="alert-desc">Threshold is 20. Place reorder before end of day.</div>
+            </div>
+          </div>
+          <div class="alert alert-warn">
+            <div class="alert-icon">⚠️</div>
+            <div class="alert-text">
+              <div class="alert-title">Expiry Alert: Fresh Milk — expires in 2 days</div>
+              <div class="alert-desc">36 units. Consider promotion to move stock faster.</div>
+            </div>
+          </div>
+          <div class="alert alert-info">
+            <div class="alert-icon">ℹ️</div>
+            <div class="alert-text">
+              <div class="alert-title">New supplier offer: Nestlé Q3 discount — 8%</div>
+              <div class="alert-desc">Valid until July 31. Review in Supplier portal.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Breakdown + Delivery KPIs -->
+      <div class="two-col" style="margin-top:16px">
+        <div class="card">
+          <div class="section-head">
+            <div class="section-title">Payment Methods</div>
+            <div class="section-sub">Today's breakdown</div>
+          </div>
+          <div class="kpi-rings" id="pay-rings"></div>
+          <div style="margin-top:16px" id="pay-breakdown"></div>
+        </div>
+        <div class="card">
+          <div class="section-head">
+            <div class="section-title">Delivery Performance</div>
+          </div>
+          <div id="delivery-kpi"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ORDERS ── -->
+    <div class="view fade-in" id="view-orders">
+      <div class="filters-bar">
+        <select class="form-control" id="order-status-filter" onchange="renderOrdersTable()">
+          <option value="">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Processing">Processing</option>
+          <option value="Shipped">Shipped</option>
+          <option value="Delivered">Delivered</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+        <select class="form-control" id="order-pay-filter" onchange="renderOrdersTable()">
+          <option value="">All Payment</option>
+          <option value="Paid">Paid</option>
+          <option value="Pending">Pending</option>
+          <option value="Refunded">Refunded</option>
+        </select>
+        <input class="form-control" type="text" placeholder="Search order ID or customer…" id="order-search" oninput="renderOrdersTable()" style="width:220px">
+        <button class="btn btn-primary" onclick="openModal('new-order')">+ New Order</button>
+        <span style="margin-left:auto;font-size:12px;color:var(--text3)" id="order-count"></span>
+      </div>
+      <div class="card" style="padding:0">
+        <div class="table-wrap">
+          <table id="orders-table">
+            <thead>
+              <tr>
+                <th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Payment</th><th>Date</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="orders-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── INVENTORY ── -->
+    <div class="view fade-in" id="view-inventory">
+      <div class="filters-bar">
+        <div class="chip-row" style="margin-bottom:0">
+          <div class="chip active" onclick="filterInv(this,'')">All</div>
+          <div class="chip" onclick="filterInv(this,'Groceries')">Groceries</div>
+          <div class="chip" onclick="filterInv(this,'Beverages')">Beverages</div>
+          <div class="chip" onclick="filterInv(this,'Dairy')">Dairy</div>
+          <div class="chip" onclick="filterInv(this,'Household')">Household</div>
+          <div class="chip" onclick="filterInv(this,'Personal Care')">Personal Care</div>
+        </div>
+        <select class="form-control" id="inv-stock-filter" onchange="renderInventory()" style="width:160px;margin-left:auto">
+          <option value="">All Stock Levels</option>
+          <option value="critical">Critical (0-5)</option>
+          <option value="low">Low (6-20)</option>
+          <option value="ok">OK (21+)</option>
+        </select>
+        <button class="btn btn-primary" onclick="openModal('add-product')">+ Add Product</button>
+      </div>
+
+      <div class="two-col" style="margin-bottom:16px">
+        <div class="card card-sm">
+          <div class="stat-label">Total SKUs</div>
+          <div style="font-size:24px;font-weight:700;font-family:var(--font-display)">1,284</div>
+        </div>
+        <div class="card card-sm">
+          <div class="stat-label">Inventory Value</div>
+          <div style="font-size:24px;font-weight:700;font-family:var(--font-display);color:var(--accent)">₦24.7M</div>
+        </div>
+      </div>
+
+      <div class="inv-grid" id="inv-grid"></div>
+    </div>
+
+    <!-- ── PRODUCTS ── -->
+    <div class="view fade-in" id="view-products">
+      <div class="filters-bar">
+        <input class="form-control" type="text" placeholder="Search products…" id="prod-search" oninput="renderProductsTable()" style="width:220px">
+        <select class="form-control" id="prod-cat-filter" onchange="renderProductsTable()">
+          <option value="">All Categories</option>
+          <option>Groceries</option><option>Beverages</option>
+          <option>Dairy</option><option>Household</option><option>Personal Care</option>
+        </select>
+        <button class="btn btn-primary" onclick="openModal('add-product')">+ Add Product</button>
+      </div>
+      <div class="card" style="padding:0">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>SKU</th><th>Product</th><th>Category</th><th>Price</th><th>Cost</th><th>Margin</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="products-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DELIVERY ── -->
+    <div class="view fade-in" id="view-delivery">
+      <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+        <div class="stat-card blue">
+          <div class="stat-label">In Transit</div>
+          <div class="stat-value" style="color:var(--accent2)">24</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">Delivered Today</div>
+          <div class="stat-value" style="color:var(--accent)">53</div>
+        </div>
+        <div class="stat-card yellow">
+          <div class="stat-label">Pending Pickup</div>
+          <div class="stat-value" style="color:var(--accent4)">11</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-label">Failed Delivery</div>
+          <div class="stat-value" style="color:var(--accent3)">3</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="section-head">
+            <div class="section-title">Live Tracking</div>
+            <span class="badge badge-green">● Live</span>
+          </div>
+          <div class="delivery-map">
+            <div class="map-grid"></div>
+            <div class="map-pin" style="left:30%;top:40%">🚚</div>
+            <div class="map-pin" style="left:55%;top:25%;animation-delay:0.5s">🚚</div>
+            <div class="map-pin" style="left:70%;top:55%;animation-delay:1s">🚚</div>
+            <div class="map-pin" style="left:20%;top:65%;animation-delay:1.5s">📍</div>
+            <div class="map-pin" style="left:80%;top:35%;animation-delay:0.3s">📍</div>
+            <div style="position:absolute;bottom:10px;right:10px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:11px;color:var(--text2);font-family:var(--font-mono)">
+              🚚 Active Vehicles &nbsp;|&nbsp; 📍 Drop Points
+            </div>
+          </div>
+          <div class="section-head" style="margin-top:16px">
+            <div class="section-title" style="font-size:14px">Active Drivers</div>
+          </div>
+          <div id="drivers-list"></div>
+        </div>
+
+        <div class="card">
+          <div class="section-head">
+            <div class="section-title">Delivery Queue</div>
+            <button class="btn btn-primary btn-sm" onclick="openModal('assign-delivery')">+ Assign</button>
+          </div>
+          <div id="delivery-queue"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PAYMENTS ── -->
+    <div class="view fade-in" id="view-payments">
+      <div class="stat-grid" style="margin-bottom:20px">
+        <div class="stat-card green">
+          <div class="stat-label">Total Collected</div>
+          <div class="stat-value" style="color:var(--accent)">₦2.4M</div>
+          <div class="stat-delta">This month</div>
+        </div>
+        <div class="stat-card yellow">
+          <div class="stat-label">Pending</div>
+          <div class="stat-value" style="color:var(--accent4)">₦187K</div>
+          <div class="stat-delta">42 transactions</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-label">Refunded</div>
+          <div class="stat-value" style="color:var(--accent3)">₦34K</div>
+          <div class="stat-delta">8 transactions</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-label">Avg Transaction</div>
+          <div class="stat-value" style="color:var(--accent2)">₦5.8K</div>
+          <div class="stat-delta">↑ 3.2% vs last mo.</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="section-head">
+            <div class="section-title">Process Payment</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Order Reference</label>
+            <input class="form-control" type="text" placeholder="ORD-XXXXX or scan barcode">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Amount (₦)</label>
+            <input class="form-control" type="number" placeholder="0.00" id="pay-amount">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Payment Method</label>
+            <div id="pay-methods"></div>
+          </div>
+          <div class="separator"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <span style="font-size:14px;color:var(--text2)">Total Due</span>
+            <span style="font-size:20px;font-weight:700;font-family:var(--font-display);color:var(--accent)" id="pay-total-display">₦0.00</span>
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="processPayment()">Process Payment ›</button>
+        </div>
+
+        <div class="card">
+          <div class="section-head">
+            <div class="section-title">Recent Transactions</div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>TXN ID</th><th>Order</th><th>Amount</th><th>Method</th><th>Status</th><th>Time</th></tr></thead>
+              <tbody id="txn-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CUSTOMERS ── -->
+    <div class="view fade-in" id="view-customers">
+      <div class="filters-bar">
+        <input class="form-control" type="text" placeholder="Search customers…" id="cust-search" oninput="renderCustomers()" style="width:220px">
+        <button class="btn btn-primary" onclick="openModal('add-customer')">+ Add Customer</button>
+      </div>
+      <div class="card" style="padding:0">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Customer</th><th>Phone</th><th>Email</th><th>Total Orders</th><th>Lifetime Value</th><th>Last Order</th><th>Tier</th></tr></thead>
+            <tbody id="customers-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ANALYTICS ── -->
+    <div class="view fade-in" id="view-analytics">
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab(this,'revenue')">Revenue</div>
+        <div class="tab" onclick="switchTab(this,'products')">Products</div>
+        <div class="tab" onclick="switchTab(this,'customers')">Customers</div>
+      </div>
+      <div id="analytics-content"></div>
+    </div>
+
+    <!-- ── SETTINGS ── -->
+    <div class="view fade-in" id="view-settings">
+      <div class="two-col">
+        <div class="card">
+          <div class="section-title" style="margin-bottom:20px">Store Information</div>
+          <div class="form-group">
+            <label class="form-label">Store Name</label>
+            <input class="form-control" type="text" value="MartOS Flagship Store">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Address</label>
+            <input class="form-control" type="text" value="14 Broad Street, Lagos Island, Lagos">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Phone</label>
+              <input class="form-control" type="text" value="+234 801 234 5678">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input class="form-control" type="text" value="store@martos.ng">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Currency</label>
+            <select class="form-control">
+              <option selected>NGN — Nigerian Naira (₦)</option>
+              <option>USD — US Dollar ($)</option>
+              <option>GBP — British Pound (£)</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="showToast('Settings saved successfully','success')">Save Changes</button>
+        </div>
+
+        <div class="card">
+          <div class="section-title" style="margin-bottom:20px">Thresholds & Alerts</div>
+          <div class="form-group">
+            <label class="form-label">Low Stock Threshold (units)</label>
+            <input class="form-control" type="number" value="20">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Critical Stock Threshold (units)</label>
+            <input class="form-control" type="number" value="5">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Expiry Alert (days before)</label>
+            <input class="form-control" type="number" value="3">
+          </div>
+          <div class="separator"></div>
+          <div class="section-title" style="margin-bottom:16px;font-size:14px">Notifications</div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
+              <input type="checkbox" checked style="width:16px;height:16px"> Email alerts for low stock
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
+              <input type="checkbox" checked style="width:16px;height:16px"> SMS for delivery updates
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px">
+              <input type="checkbox" style="width:16px;height:16px"> Daily revenue report
+            </label>
+          </div>
+          <button class="btn btn-primary" style="margin-top:20px" onclick="showToast('Alert settings saved','success')">Save Alerts</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const PRODUCTS = [
+  {id:'P001',name:'Long Grain Rice 50kg',sku:'GRC-001',cat:'Groceries',price:42000,cost:32000,stock:0,emoji:'🌾'},
+  {id:'P002',name:'Sunflower Oil 5L',sku:'GRC-002',cat:'Groceries',price:7500,cost:5500,stock:12,emoji:'🫙'},
+  {id:'P003',name:'Indomie Noodles (40pk)',sku:'GRC-003',cat:'Groceries',price:6800,cost:5200,stock:84,emoji:'🍜'},
+  {id:'P004',name:'Peak Full Cream Milk 400g',sku:'DAI-001',cat:'Dairy',price:3200,cost:2400,stock:36,emoji:'🥛'},
+  {id:'P005',name:'Dano Milk Powder 1kg',sku:'DAI-002',cat:'Dairy',price:8900,cost:6800,stock:28,emoji:'🥛'},
+  {id:'P006',name:'Malt Drink 33cl (24pk)',sku:'BEV-001',cat:'Beverages',price:5600,cost:4000,stock:60,emoji:'🍺'},
+  {id:'P007',name:'Coca-Cola 50cl (24pk)',sku:'BEV-002',cat:'Beverages',price:6400,cost:4800,stock:45,emoji:'🥤'},
+  {id:'P008',name:'Omo Detergent 2kg',sku:'HHD-001',cat:'Household',price:4200,cost:3100,stock:3,emoji:'🧺'},
+  {id:'P009',name:'Dettol Soap 175g (6pk)',sku:'PCS-001',cat:'Personal Care',price:3800,cost:2700,stock:52,emoji:'🧼'},
+  {id:'P010',name:'Cabin Biscuit 1kg',sku:'GRC-004',cat:'Groceries',price:2900,cost:2000,stock:110,emoji:'🍪'},
+  {id:'P011',name:'Nestlé Milo 500g',sku:'BEV-003',cat:'Beverages',price:5100,cost:3900,stock:19,emoji:'☕'},
+  {id:'P012',name:'Fresh Eggs (30crt)',sku:'DAI-003',cat:'Dairy',price:4500,cost:3400,stock:8,emoji:'🥚'},
+  {id:'P013',name:'Tomato Paste 400g',sku:'GRC-005',cat:'Groceries',price:900,cost:600,stock:200,emoji:'🍅'},
+  {id:'P014',name:'Colgate Toothpaste 100ml',sku:'PCS-002',cat:'Personal Care',price:1200,cost:850,stock:67,emoji:'🪥'},
+  {id:'P015',name:'Ariel Washing Powder 1kg',sku:'HHD-002',cat:'Household',price:3600,cost:2600,stock:4,emoji:'🧺'},
+];
+
+const CUSTOMERS = [
+  {id:'C001',name:'Ngozi Adeyemi',phone:'+234 802 111 2222',email:'ngozi@gmail.com',orders:18,ltv:342000,last:'2025-05-08',tier:'Gold'},
+  {id:'C002',name:'Emeka Okonkwo',phone:'+234 803 333 4444',email:'emeka@yahoo.com',orders:7,ltv:98500,last:'2025-05-09',tier:'Silver'},
+  {id:'C003',name:'Fatima Hassan',phone:'+234 806 555 6666',email:'fatima.h@mail.com',orders:31,ltv:621000,last:'2025-05-10',tier:'Platinum'},
+  {id:'C004',name:'Chidi Eze',phone:'+234 807 777 8888',email:'chidi.eze@biz.ng',orders:3,ltv:24300,last:'2025-04-28',tier:'Bronze'},
+  {id:'C005',name:'Amina Bello',phone:'+234 809 999 0000',email:'amina@corp.ng',orders:12,ltv:187200,last:'2025-05-07',tier:'Silver'},
+  {id:'C006',name:'Kemi Olatunji',phone:'+234 815 123 4567',email:'kemi.ola@livemail.ng',orders:22,ltv:455000,last:'2025-05-09',tier:'Gold'},
+];
+
+let ORDERS = [
+  {id:'ORD-10892',cust:'Ngozi Adeyemi',items:4,total:28700,status:'Delivered',payment:'Paid',date:'2025-05-10',method:'Card'},
+  {id:'ORD-10891',cust:'Emeka Okonkwo',items:2,total:12300,status:'Shipped',payment:'Paid',date:'2025-05-10',method:'Transfer'},
+  {id:'ORD-10890',cust:'Fatima Hassan',items:7,total:54600,status:'Processing',payment:'Paid',date:'2025-05-10',method:'POS'},
+  {id:'ORD-10889',cust:'Chidi Eze',items:1,total:3200,status:'Pending',payment:'Pending',date:'2025-05-10',method:'Cash'},
+  {id:'ORD-10888',cust:'Amina Bello',items:5,total:41000,status:'Shipped',payment:'Paid',date:'2025-05-09',method:'Card'},
+  {id:'ORD-10887',cust:'Kemi Olatunji',items:3,total:19800,status:'Delivered',payment:'Paid',date:'2025-05-09',method:'Transfer'},
+  {id:'ORD-10886',cust:'Walk-in Customer',items:2,total:8900,status:'Delivered',payment:'Paid',date:'2025-05-09',method:'Cash'},
+  {id:'ORD-10885',cust:'Ngozi Adeyemi',items:6,total:37400,status:'Cancelled',payment:'Refunded',date:'2025-05-08',method:'Card'},
+  {id:'ORD-10884',cust:'Fatima Hassan',items:4,total:22100,status:'Delivered',payment:'Paid',date:'2025-05-08',method:'POS'},
+  {id:'ORD-10883',cust:'Emeka Okonkwo',items:1,total:7500,status:'Delivered',payment:'Paid',date:'2025-05-08',method:'Transfer'},
+];
+
+const TXNS = [
+  {id:'TXN-88821',order:'ORD-10892',amount:28700,method:'Card',status:'Success',time:'14:22'},
+  {id:'TXN-88820',order:'ORD-10891',amount:12300,method:'Transfer',status:'Success',time:'13:45'},
+  {id:'TXN-88819',order:'ORD-10890',amount:54600,method:'POS',status:'Success',time:'12:10'},
+  {id:'TXN-88818',order:'ORD-10888',amount:41000,method:'Card',status:'Success',time:'11:30'},
+  {id:'TXN-88817',order:'ORD-10887',amount:19800,method:'Transfer',status:'Success',time:'10:15'},
+  {id:'TXN-88816',order:'ORD-10885',amount:37400,method:'Card',status:'Refunded',time:'09:00'},
+];
+
+const DRIVERS = [
+  {name:'Tunde Okafor',vehicle:'Honda Pilot - LG 482 XA',status:'In Transit',load:3,phone:'+234 812 111 2222'},
+  {name:'Bisi Adewale',vehicle:'Toyota Hiace - LG 891 ZB',status:'In Transit',load:5,phone:'+234 812 333 4444'},
+  {name:'Sani Abubakar',vehicle:'Kia K2500 - KN 345 AB',status:'Available',load:0,phone:'+234 812 555 6666'},
+  {name:'Chibuzor Ike',vehicle:'Ford Transit - LG 156 YC',status:'Available',load:0,phone:'+234 812 777 8888'},
+];
+
+const DELIVERY_QUEUE = [
+  {id:'ORD-10891',cust:'Emeka Okonkwo',addr:'23 Eko Atlantic, Lagos',items:2,eta:'15:30',priority:'Normal'},
+  {id:'ORD-10890',cust:'Fatima Hassan',addr:'45 Adeola Odeku, VI',items:7,eta:'16:00',priority:'Express'},
+  {id:'ORD-10889',cust:'Chidi Eze',addr:'7 Broad St, Lagos Island',items:1,eta:'17:00',priority:'Normal'},
+  {id:'ORD-10888',cust:'Amina Bello',addr:'12 Marina Rd, Lagos',items:5,eta:'15:45',priority:'Express'},
+];
+
+// ─── NAVIGATION ─────────────────────────────────────────────────────────────
+let currentView = 'dashboard';
+function navigate(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  document.getElementById('view-'+view).classList.remove('fade-in');
+  void document.getElementById('view-'+view).offsetWidth;
+  document.getElementById('view-'+view).classList.add('fade-in');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.textContent.trim().toLowerCase().startsWith(view.charAt(0).toUpperCase()+view.slice(1).charAt(0))) {}
+  });
+  // Match nav by onclick attr
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') === `navigate('${view}')`) n.classList.add('active');
+  });
+  currentView = view;
+  const titles = {dashboard:'Dashboard',orders:'Orders',inventory:'Inventory',products:'Products',delivery:'Delivery',payments:'Payments',customers:'Customers',analytics:'Analytics',settings:'Settings'};
+  document.getElementById('topbar-title').textContent = titles[view] || view;
+  renderView(view);
+}
+
+function renderView(v) {
+  if (v==='orders') renderOrdersTable();
+  if (v==='inventory') renderInventory();
+  if (v==='products') renderProductsTable();
+  if (v==='delivery') renderDelivery();
+  if (v==='payments') renderPayments();
+  if (v==='customers') renderCustomers();
+  if (v==='analytics') renderAnalytics('revenue');
+}
+
+// ─── CLOCK ──────────────────────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('en-NG',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) + ' · ' + now.toLocaleDateString('en-NG',{day:'2-digit',month:'short',year:'numeric'});
+}
+setInterval(updateClock, 1000); updateClock();
+
+// ─── DASHBOARD ──────────────────────────────────────────────────────────────
+function renderDashboard() {
+  // Revenue chart
+  const revData = [{l:'Mon',v:620},{l:'Tue',v:480},{l:'Wed',v:740},{l:'Thu',v:510},{l:'Fri',v:890},{l:'Sat',v:720},{l:'Sun',v:847}];
+  const maxV = Math.max(...revData.map(d=>d.v));
+  const revChart = document.getElementById('rev-chart');
+  revChart.innerHTML = revData.map(d=>`
+    <div class="chart-bar-wrap">
+      <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-bottom:4px">₦${d.v}K</div>
+      <div class="chart-bar-outer" style="height:${Math.round((d.v/maxV)*100)}%">
+        <div class="chart-bar-inner" style="height:100%;background:${d.l==='Sun'?'var(--accent)':'rgba(79,255,176,0.35)'}"></div>
+      </div>
+      <div class="chart-xlabel">${d.l}</div>
+    </div>
+  `).join('');
+
+  // Dash orders
+  document.getElementById('dash-orders').innerHTML = ORDERS.slice(0,5).map(o=>`
+    <div class="order-card" onclick="navigate('orders')">
+      <div class="order-card-head">
+        <span class="order-id">${o.id}</span>
+        <span class="badge ${statusBadge(o.status)}">${o.status}</span>
+      </div>
+      <div class="order-meta">
+        <span>👤 ${o.cust}</span>
+        <span>📦 ${o.items} items</span>
+        <span style="color:var(--accent);font-family:var(--font-mono)">₦${o.total.toLocaleString()}</span>
+      </div>
+    </div>
+  `).join('');
+
+  // Top products
+  const topProds = [{name:'Indomie Noodles',sold:124,pct:100},{name:'Coca-Cola 24pk',sold:89,pct:72},{name:'Tomato Paste',sold:76,pct:61},{name:'Cabin Biscuit',sold:62,pct:50},{name:'Colgate',sold:54,pct:44}];
+  document.getElementById('top-products').innerHTML = topProds.map(p=>`
+    <div class="prog-wrap">
+      <div class="prog-head">
+        <span class="prog-label">${p.name}</span>
+        <span class="prog-val">${p.sold} units</span>
+      </div>
+      <div class="prog-track"><div class="prog-fill" style="width:${p.pct}%;background:var(--accent)"></div></div>
+    </div>
+  `).join('');
+
+  // Payment breakdown
+  const payData = [{l:'POS/Card',v:42,c:'var(--accent)'},{l:'Transfer',v:31,c:'var(--accent2)'},{l:'Cash',v:18,c:'var(--accent4)'},{l:'USSD',v:9,c:'var(--accent5)'}];
+  document.getElementById('pay-breakdown').innerHTML = payData.map(p=>`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div class="dot" style="background:${p.c}"></div>
+      <span style="font-size:13px;flex:1">${p.l}</span>
+      <span style="font-size:13px;font-family:var(--font-mono);color:var(--text2)">${p.v}%</span>
+      <div style="width:80px;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden">
+        <div style="height:100%;width:${p.v}%;background:${p.c};border-radius:2px"></div>
+      </div>
+    </div>
+  `).join('');
+
+  // SVG rings
+  const rings = [{l:'On-Time',v:92,c:'var(--accent)'},{l:'Fulfilled',v:87,c:'var(--accent2)'},{l:'Returned',v:4,c:'var(--accent3)'}];
+  document.getElementById('pay-rings').innerHTML = rings.map(r=>{
+    const dash = r.v/100*282.6;
+    return `<div class="kpi-ring">
+      <svg width="80" height="80" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="var(--surface3)" stroke-width="8"/>
+        <circle cx="50" cy="50" r="45" fill="none" stroke="${r.c}" stroke-width="8"
+          stroke-dasharray="${dash} ${282.6-dash}" stroke-linecap="round"/>
+      </svg>
+      <div class="kpi-ring-label">${r.l}</div>
+      <div class="kpi-ring-val" style="color:${r.c}">${r.v}%</div>
+    </div>`;
+  }).join('');
+
+  // Delivery KPIs
+  const kpis = [{l:'Deliveries today',v:'58/63',sub:'92% completion'},{l:'Avg delivery time',v:'47 min',sub:'Target: 60 min'},{l:'Failed deliveries',v:'3',sub:'Will reattempt tomorrow'},{l:'COD collected',v:'₦128K',sub:'21 cash orders'}];
+  document.getElementById('delivery-kpi').innerHTML = kpis.map(k=>`
+    <div style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)">
+      <div style="flex:1">
+        <div style="font-size:13px;color:var(--text2)">${k.l}</div>
+        <div style="font-size:13px;color:var(--text3)">${k.sub}</div>
+      </div>
+      <div style="font-size:18px;font-weight:700;font-family:var(--font-display)">${k.v}</div>
+    </div>
+  `).join('');
+}
+
+// ─── ORDERS ─────────────────────────────────────────────────────────────────
+function statusBadge(s) {
+  const map = {Pending:'badge-yellow',Processing:'badge-blue',Shipped:'badge-purple',Delivered:'badge-green',Cancelled:'badge-red'};
+  return map[s]||'badge-gray';
+}
+function payBadge(s) {
+  return s==='Paid'?'badge-green':s==='Refunded'?'badge-red':'badge-yellow';
+}
+
+function renderOrdersTable() {
+  const statusF = document.getElementById('order-status-filter').value;
+  const payF = document.getElementById('order-pay-filter').value;
+  const search = document.getElementById('order-search').value.toLowerCase();
+  let orders = ORDERS.filter(o=>{
+    if (statusF && o.status!==statusF) return false;
+    if (payF && o.payment!==payF) return false;
+    if (search && !o.id.toLowerCase().includes(search) && !o.cust.toLowerCase().includes(search)) return false;
+    return true;
+  });
+  document.getElementById('order-count').textContent = `${orders.length} orders`;
+  document.getElementById('orders-tbody').innerHTML = orders.map(o=>`
+    <tr class="tr-clickable">
+      <td><span class="order-id">${o.id}</span></td>
+      <td>${o.cust}</td>
+      <td>${o.items}</td>
+      <td style="font-family:var(--font-mono);color:var(--accent)">₦${o.total.toLocaleString()}</td>
+      <td><span class="badge ${statusBadge(o.status)}">${o.status}</span></td>
+      <td><span class="badge ${payBadge(o.payment)}">${o.payment}</span></td>
+      <td style="color:var(--text2);font-size:12px">${o.date}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick="viewOrder('${o.id}')">View</button>
+          ${o.status==='Pending'?`<button class="btn btn-primary btn-sm" onclick="updateStatus('${o.id}','Processing')">Process</button>`:''}
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function viewOrder(id) {
+  const o = ORDERS.find(x=>x.id===id);
+  openModal('view-order', o);
+}
+function updateStatus(id, status) {
+  ORDERS = ORDERS.map(o=>o.id===id?{...o,status}:o);
+  renderOrdersTable();
+  showToast(`${id} updated to ${status}`,'success');
+}
+
+// ─── INVENTORY ──────────────────────────────────────────────────────────────
+let invCat = '';
+function filterInv(el, cat) {
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  invCat = cat;
+  renderInventory();
+}
+function renderInventory() {
+  const stockF = document.getElementById('inv-stock-filter')?.value||'';
+  let prods = PRODUCTS.filter(p=>{
+    if (invCat && p.cat!==invCat) return false;
+    if (stockF==='critical' && p.stock>5) return false;
+    if (stockF==='low' && (p.stock<=5||p.stock>20)) return false;
+    if (stockF==='ok' && p.stock<=20) return false;
+    return true;
+  });
+  const stockColor = s => s===0?'var(--accent3)':s<=5?'var(--accent3)':s<=20?'var(--accent4)':'var(--accent)';
+  const stockLabel = s => s===0?'Out of Stock':s<=5?'Critical':s<=20?'Low Stock':'In Stock';
+  document.getElementById('inv-grid').innerHTML = prods.map(p=>`
+    <div class="inv-card" onclick="openModal('edit-inv','${p.id}')">
+      <div class="inv-thumb">${p.emoji}</div>
+      <div class="inv-name" title="${p.name}">${p.name}</div>
+      <div class="inv-sku">${p.sku}</div>
+      <div class="inv-price">₦${p.price.toLocaleString()}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">
+        <div class="inv-stock" style="color:${stockColor(p.stock)}">${stockLabel(p.stock)}</div>
+        <div class="inv-stock">${p.stock} units</div>
+      </div>
+      <div class="stock-bar">
+        <div class="stock-fill" style="width:${Math.min(p.stock/100*100,100)}%;background:${stockColor(p.stock)}"></div>
+      </div>
+    </div>
+  `).join('') || '<div class="empty"><div class="empty-icon">📦</div><div class="empty-text">No products match filters</div></div>';
+}
+
+// ─── PRODUCTS TABLE ─────────────────────────────────────────────────────────
+function renderProductsTable() {
+  const search = document.getElementById('prod-search')?.value.toLowerCase()||'';
+  const cat = document.getElementById('prod-cat-filter')?.value||'';
+  let prods = PRODUCTS.filter(p=>{
+    if (cat && p.cat!==cat) return false;
+    if (search && !p.name.toLowerCase().includes(search) && !p.sku.toLowerCase().includes(search)) return false;
+    return true;
+  });
+  const stockStatus = s=>s===0?`<span class="badge badge-red">Out</span>`:s<=5?`<span class="badge badge-red">Critical</span>`:s<=20?`<span class="badge badge-yellow">Low</span>`:`<span class="badge badge-green">OK</span>`;
+  document.getElementById('products-tbody').innerHTML = prods.map(p=>{
+    const margin = Math.round((p.price-p.cost)/p.price*100);
+    return `<tr>
+      <td style="font-family:var(--font-mono);font-size:12px;color:var(--text3)">${p.sku}</td>
+      <td><div style="display:flex;align-items:center;gap:8px"><span style="font-size:18px">${p.emoji}</span>${p.name}</div></td>
+      <td><span class="badge badge-gray">${p.cat}</span></td>
+      <td style="font-family:var(--font-mono);color:var(--accent)">₦${p.price.toLocaleString()}</td>
+      <td style="font-family:var(--font-mono);color:var(--text2)">₦${p.cost.toLocaleString()}</td>
+      <td><span style="color:${margin>25?'var(--accent)':margin>15?'var(--accent4)':'var(--accent3)'};font-family:var(--font-mono)">${margin}%</span></td>
+      <td style="font-family:var(--font-mono)">${p.stock}</td>
+      <td>${stockStatus(p.stock)}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick="openModal('edit-product','${p.id}')">Edit</button>
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Reorder placed for ${p.name}','info')">Reorder</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── DELIVERY ────────────────────────────────────────────────────────────────
+function renderDelivery() {
+  document.getElementById('drivers-list').innerHTML = DRIVERS.map(d=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="width:36px;height:36px;border-radius:50%;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:16px">🧑</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:500">${d.name}</div>
+        <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono)">${d.vehicle}</div>
+      </div>
+      <div style="text-align:right">
+        <span class="badge ${d.status==='In Transit'?'badge-blue':'badge-green'}">${d.status}</span>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px">${d.load} orders</div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('delivery-queue').innerHTML = DELIVERY_QUEUE.map(d=>`
+    <div class="order-card">
+      <div class="order-card-head">
+        <span class="order-id">${d.id}</span>
+        <span class="badge ${d.priority==='Express'?'badge-red':'badge-gray'}">${d.priority}</span>
+      </div>
+      <div style="font-size:13px;margin-bottom:6px">${d.cust}</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:8px">📍 ${d.addr}</div>
+      <div class="order-meta">
+        <span>📦 ${d.items} items</span>
+        <span>⏱ ETA ${d.eta}</span>
+        <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="assignDriver('${d.id}')">Assign</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function assignDriver(id) {
+  showToast(`Delivery ${id} assigned to Tunde Okafor`, 'success');
+}
+
+// ─── PAYMENTS ───────────────────────────────────────────────────────────────
+let selectedPayMethod = 'POS';
+function renderPayments() {
+  const methods = [
+    {id:'POS',name:'POS / Card',detail:'Visa • Mastercard • Verve',icon:'💳'},
+    {id:'Transfer',name:'Bank Transfer',detail:'NEFT • Instant Pay',icon:'🏦'},
+    {id:'Cash',name:'Cash',detail:'Physical payment at counter',icon:'💵'},
+    {id:'USSD',name:'USSD',detail:'*737# and other codes',icon:'📱'},
+  ];
+  document.getElementById('pay-methods').innerHTML = methods.map(m=>`
+    <div class="pay-method ${m.id===selectedPayMethod?'selected':''}" onclick="selectPayMethod('${m.id}')">
+      <div class="pay-icon">${m.icon}</div>
+      <div class="pay-info">
+        <div class="pay-name">${m.name}</div>
+        <div class="pay-detail">${m.detail}</div>
+      </div>
+      ${m.id===selectedPayMethod?'<span style="color:var(--accent);font-size:18px">✓</span>':''}
+    </div>
+  `).join('');
+
+  document.getElementById('txn-tbody').innerHTML = TXNS.map(t=>`
+    <tr>
+      <td style="font-family:var(--font-mono);font-size:12px;color:var(--text3)">${t.id}</td>
+      <td><span class="order-id" style="font-size:12px">${t.order}</span></td>
+      <td style="font-family:var(--font-mono);color:var(--accent)">₦${t.amount.toLocaleString()}</td>
+      <td>${t.method}</td>
+      <td><span class="badge ${t.status==='Success'?'badge-green':'badge-red'}">${t.status}</span></td>
+      <td style="color:var(--text3);font-family:var(--font-mono)">${t.time}</td>
+    </tr>
+  `).join('');
+
+  document.getElementById('pay-amount').addEventListener('input', function(){
+    const v = parseFloat(this.value)||0;
+    document.getElementById('pay-total-display').textContent = '₦'+v.toLocaleString('en-NG',{minimumFractionDigits:2,maximumFractionDigits:2});
+  });
+}
+
+function selectPayMethod(id) {
+  selectedPayMethod = id;
+  renderPayments();
+}
+
+function processPayment() {
+  const amount = document.getElementById('pay-amount').value;
+  if (!amount || parseFloat(amount)<=0) { showToast('Enter a valid amount','error'); return; }
+  showToast(`₦${parseFloat(amount).toLocaleString()} processed via ${selectedPayMethod}`, 'success');
+  document.getElementById('pay-amount').value = '';
+  document.getElementById('pay-total-display').textContent = '₦0.00';
+}
+
+// ─── CUSTOMERS ───────────────────────────────────────────────────────────────
+function renderCustomers() {
+  const search = document.getElementById('cust-search')?.value.toLowerCase()||'';
+  const tierColor = t=>({Platinum:'badge-purple',Gold:'badge-yellow',Silver:'badge-gray',Bronze:'badge-red'}[t]||'badge-gray');
+  let custs = CUSTOMERS.filter(c=>!search||c.name.toLowerCase().includes(search)||c.phone.includes(search));
+  document.getElementById('customers-tbody').innerHTML = custs.map(c=>`
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--accent5-dim);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--accent5)">
+            ${c.name.split(' ').map(x=>x[0]).join('')}
+          </div>
+          ${c.name}
+        </div>
+      </td>
+      <td style="font-family:var(--font-mono);font-size:12px">${c.phone}</td>
+      <td style="font-size:12px;color:var(--text2)">${c.email}</td>
+      <td style="text-align:center">${c.orders}</td>
+      <td style="font-family:var(--font-mono);color:var(--accent)">₦${c.ltv.toLocaleString()}</td>
+      <td style="font-size:12px;color:var(--text3)">${c.last}</td>
+      <td><span class="badge ${tierColor(c.tier)}">${c.tier}</span></td>
+    </tr>
+  `).join('');
+}
+
+// ─── ANALYTICS ──────────────────────────────────────────────────────────────
+function switchTab(el, tab) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderAnalytics(tab);
+}
+
+function renderAnalytics(tab) {
+  const cont = document.getElementById('analytics-content');
+  if (tab==='revenue') {
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const vals = [1.2,1.5,1.8,2.1,1.9,2.4,2.8,2.5,3.1,2.9,3.4,3.8];
+    const maxV = Math.max(...vals);
+    cont.innerHTML = `
+      <div class="two-col">
+        <div class="card">
+          <div class="section-title" style="margin-bottom:4px">Monthly Revenue (₦M)</div>
+          <div class="section-sub" style="margin-bottom:16px">Jan–Dec 2024</div>
+          <div class="chart-container" style="height:200px">
+            ${months.map((m,i)=>`
+              <div class="chart-bar-wrap">
+                <div style="font-size:9px;color:var(--text3);font-family:var(--font-mono)">₦${vals[i]}M</div>
+                <div class="chart-bar-outer" style="height:${Math.round(vals[i]/maxV*100)}%">
+                  <div class="chart-bar-inner" style="height:100%;background:${i===4?'var(--accent)':'rgba(79,255,176,0.35)'}"></div>
+                </div>
+                <div class="chart-xlabel">${m}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-title" style="margin-bottom:16px">Key Metrics</div>
+          ${[
+            {l:'Total Revenue YTD',v:'₦20.7M',up:true,d:'+18.3%'},
+            {l:'Gross Profit Margin',v:'28.4%',up:true,d:'+2.1pp'},
+            {l:'Avg Order Value',v:'₦5,830',up:true,d:'+7.2%'},
+            {l:'Orders Processed',v:'3,541',up:true,d:'+24%'},
+            {l:'Return Rate',v:'1.8%',up:false,d:'-0.3pp'},
+          ].map(k=>`
+            <div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)">
+              <div style="flex:1;font-size:13px;color:var(--text2)">${k.l}</div>
+              <div style="font-size:16px;font-weight:700;font-family:var(--font-display)">${k.v}</div>
+              <div style="font-size:12px;color:${k.up?'var(--accent)':'var(--accent3)'};font-family:var(--font-mono)">${k.d}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  } else if (tab==='products') {
+    cont.innerHTML = `
+      <div class="card">
+        <div class="section-title" style="margin-bottom:16px">Product Performance</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Product</th><th>Category</th><th>Units Sold</th><th>Revenue</th><th>Margin</th><th>Returns</th></tr></thead>
+            <tbody>
+              ${PRODUCTS.slice(0,10).map(p=>{
+                const sold = Math.floor(Math.random()*200+20);
+                const margin = Math.round((p.price-p.cost)/p.price*100);
+                return `<tr>
+                  <td><div style="display:flex;align-items:center;gap:8px"><span>${p.emoji}</span>${p.name}</div></td>
+                  <td><span class="badge badge-gray">${p.cat}</span></td>
+                  <td style="font-family:var(--font-mono)">${sold}</td>
+                  <td style="font-family:var(--font-mono);color:var(--accent)">₦${(sold*p.price/1000).toFixed(0)}K</td>
+                  <td style="color:${margin>25?'var(--accent)':margin>15?'var(--accent4)':'var(--accent3)'};font-family:var(--font-mono)">${margin}%</td>
+                  <td style="font-family:var(--font-mono);color:var(--text2)">${Math.floor(Math.random()*5)}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  } else {
+    const tiers = [{t:'Platinum',n:3,pct:12},{t:'Gold',n:8,pct:31},{t:'Silver',n:11,pct:42},{t:'Bronze',n:4,pct:15}];
+    const tierColors = {Platinum:'var(--accent5)',Gold:'var(--accent4)',Silver:'var(--text2)',Bronze:'var(--accent3)'};
+    cont.innerHTML = `
+      <div class="two-col">
+        <div class="card">
+          <div class="section-title" style="margin-bottom:16px">Customer Segments</div>
+          ${tiers.map(t=>`
+            <div class="prog-wrap">
+              <div class="prog-head">
+                <span class="prog-label" style="color:${tierColors[t.t]}">${t.t} (${t.n})</span>
+                <span class="prog-val">${t.pct}%</span>
+              </div>
+              <div class="prog-track"><div class="prog-fill" style="width:${t.pct}%;background:${tierColors[t.t]}"></div></div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="card">
+          <div class="section-title" style="margin-bottom:16px">Customer Stats</div>
+          ${[
+            {l:'Total Active Customers',v:'26'},
+            {l:'New This Month',v:'4'},
+            {l:'Avg Lifetime Value',v:'₦254K'},
+            {l:'Repeat Purchase Rate',v:'68%'},
+            {l:'Avg Orders per Customer',v:'15.6'},
+          ].map(k=>`
+            <div style="display:flex;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)">
+              <div style="flex:1;font-size:13px;color:var(--text2)">${k.l}</div>
+              <div style="font-size:16px;font-weight:700;font-family:var(--font-display)">${k.v}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+}
+
+// ─── MODAL ───────────────────────────────────────────────────────────────────
+function openModal(type, data) {
+  const overlay = document.getElementById('modal-overlay');
+  const content = document.getElementById('modal-content');
+  overlay.classList.add('open');
+
+  if (type==='new-order') {
+    content.innerHTML = `
+      <div class="modal-title">New Order</div>
+      <div class="form-group">
+        <label class="form-label">Customer</label>
+        <select class="form-control">
+          <option value="">Select customer…</option>
+          ${CUSTOMERS.map(c=>`<option>${c.name}</option>`).join('')}
+          <option>Walk-in Customer</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Products</label>
+        <select class="form-control" id="new-order-prod">
+          ${PRODUCTS.map(p=>`<option value="${p.id}">${p.emoji} ${p.name} — ₦${p.price.toLocaleString()}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Quantity</label>
+          <input class="form-control" type="number" value="1" min="1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Delivery Type</label>
+          <select class="form-control"><option>Standard</option><option>Express</option><option>Pickup</option></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea class="form-control" rows="2" placeholder="Special instructions…"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="createOrder()">Create Order</button>
+      </div>
+    `;
+  } else if (type==='view-order') {
+    const o = data;
+    content.innerHTML = `
+      <div class="modal-title">Order ${o.id}</div>
+      <div style="display:flex;gap:10px;margin-bottom:20px">
+        <span class="badge ${statusBadge(o.status)}">${o.status}</span>
+        <span class="badge ${payBadge(o.payment)}">${o.payment}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+        ${[['Customer',o.cust],['Date',o.date],['Items',o.items+' products'],['Payment Method',o.method],['Total','₦'+o.total.toLocaleString()]].map(([l,v])=>`
+          <div>
+            <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">${l}</div>
+            <div style="font-size:14px;font-weight:500">${v}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="separator"></div>
+      <div class="section-title" style="font-size:14px;margin-bottom:12px">Order Timeline</div>
+      <ul class="timeline">
+        <li class="tl-item">
+          <div class="tl-dot" style="background:var(--accent-dim);color:var(--accent)">✓</div>
+          <div class="tl-content"><div class="tl-title">Order Placed</div><div class="tl-time">${o.date} · 10:30</div></div>
+        </li>
+        ${o.status!=='Pending'?`<li class="tl-item"><div class="tl-dot" style="background:var(--accent2-dim);color:var(--accent2)">✓</div><div class="tl-content"><div class="tl-title">Payment Confirmed</div><div class="tl-time">${o.date} · 10:35</div></div></li>`:'' }
+        ${['Processing','Shipped','Delivered'].includes(o.status)?`<li class="tl-item"><div class="tl-dot" style="background:var(--accent5-dim);color:var(--accent5)">✓</div><div class="tl-content"><div class="tl-title">Processing</div><div class="tl-time">${o.date} · 11:00</div></div></li>`:'' }
+        ${['Shipped','Delivered'].includes(o.status)?`<li class="tl-item"><div class="tl-dot" style="background:var(--accent4-dim);color:var(--accent4)">🚚</div><div class="tl-content"><div class="tl-title">Out for Delivery</div><div class="tl-time">${o.date} · 13:00</div></div></li>`:'' }
+        ${o.status==='Delivered'?`<li class="tl-item"><div class="tl-dot" style="background:var(--accent-dim);color:var(--accent)">✓</div><div class="tl-content"><div class="tl-title">Delivered</div><div class="tl-time">${o.date} · 14:22</div></div></li>`:'' }
+        ${o.status==='Cancelled'?`<li class="tl-item"><div class="tl-dot" style="background:var(--accent3-dim);color:var(--accent3)">✕</div><div class="tl-content"><div class="tl-title">Cancelled & Refunded</div><div class="tl-time">${o.date} · 15:00</div></div></li>`:'' }
+      </ul>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+        ${o.status==='Pending'?`<button class="btn btn-primary" onclick="updateStatus('${o.id}','Processing');closeModal()">Process Order</button>`:''}
+        <button class="btn btn-ghost" onclick="showToast('Receipt printed','info');closeModal()">Print Receipt</button>
+      </div>
+    `;
+  } else if (type==='add-product' || type==='edit-product') {
+    const p = type==='edit-product'?PRODUCTS.find(x=>x.id===data):null;
+    content.innerHTML = `
+      <div class="modal-title">${p?'Edit Product':'Add Product'}</div>
+      <div class="form-group">
+        <label class="form-label">Product Name</label>
+        <input class="form-control" type="text" value="${p?.name||''}" placeholder="Product name">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">SKU</label>
+          <input class="form-control" type="text" value="${p?.sku||''}" placeholder="GRC-XXX">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-control">
+            ${['Groceries','Beverages','Dairy','Household','Personal Care'].map(c=>`<option ${p?.cat===c?'selected':''}>${c}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="form-row-3">
+        <div class="form-group">
+          <label class="form-label">Selling Price (₦)</label>
+          <input class="form-control" type="number" value="${p?.price||''}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cost Price (₦)</label>
+          <input class="form-control" type="number" value="${p?.cost||''}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Current Stock</label>
+          <input class="form-control" type="number" value="${p?.stock||''}">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="showToast('Product ${p?'updated':'added'} successfully','success');closeModal()">${p?'Update':'Add Product'}</button>
+      </div>
+    `;
+  } else if (type==='edit-inv') {
+    const p = PRODUCTS.find(x=>x.id===data);
+    content.innerHTML = `
+      <div class="modal-title">${p.emoji} ${p.name}</div>
+      <div style="display:flex;gap:10px;margin-bottom:16px">
+        <span class="badge badge-gray">${p.cat}</span>
+        <span class="badge badge-gray">${p.sku}</span>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Current Stock</label>
+          <input class="form-control" type="number" value="${p.stock}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Add Stock</label>
+          <input class="form-control" type="number" placeholder="Enter quantity to add">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Selling Price (₦)</label>
+          <input class="form-control" type="number" value="${p.price}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cost Price (₦)</label>
+          <input class="form-control" type="number" value="${p.cost}">
+        </div>
+      </div>
+      <div class="alert alert-info" style="margin-top:8px">
+        <div class="alert-icon">ℹ️</div>
+        <div class="alert-text">
+          <div class="alert-title">Margin: ${Math.round((p.price-p.cost)/p.price*100)}%</div>
+          <div class="alert-desc">Based on current cost and selling price.</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="showToast('${p.name} updated','success');closeModal()">Save Changes</button>
+      </div>
+    `;
+  } else if (type==='assign-delivery') {
+    content.innerHTML = `
+      <div class="modal-title">Assign Delivery</div>
+      <div class="form-group">
+        <label class="form-label">Order</label>
+        <select class="form-control">
+          ${DELIVERY_QUEUE.map(d=>`<option>${d.id} — ${d.cust}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Driver</label>
+        <select class="form-control">
+          ${DRIVERS.filter(d=>d.status==='Available').map(d=>`<option>${d.name} · ${d.vehicle}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Priority</label>
+        <select class="form-control"><option>Normal</option><option>Express</option></select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="showToast('Delivery assigned successfully','success');closeModal()">Assign</button>
+      </div>
+    `;
+  } else if (type==='add-customer') {
+    content.innerHTML = `
+      <div class="modal-title">Add Customer</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input class="form-control" type="text" placeholder="First name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input class="form-control" type="text" placeholder="Last name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone</label>
+        <input class="form-control" type="tel" placeholder="+234 8XX XXX XXXX">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-control" type="email" placeholder="customer@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Delivery Address</label>
+        <textarea class="form-control" rows="2" placeholder="Full delivery address"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="showToast('Customer added','success');closeModal()">Add Customer</button>
+      </div>
+    `;
+  }
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function createOrder() {
+  const newId = 'ORD-'+(10892+ORDERS.length+1);
+  ORDERS.unshift({id:newId,cust:'New Customer',items:1,total:Math.floor(Math.random()*20000+5000),status:'Pending',payment:'Pending',date:new Date().toISOString().slice(0,10),method:'Cash'});
+  document.getElementById('order-badge').textContent = ORDERS.filter(o=>o.status==='Pending').length;
+  closeModal();
+  showToast(`${newId} created successfully`,'success');
+  if(currentView==='orders') renderOrdersTable();
+}
+
+// ─── TOAST ───────────────────────────────────────────────────────────────────
+function showToast(msg, type='info') {
+  const cont = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  const icon = type==='success'?'✅':type==='error'?'❌':'ℹ️';
+  toast.innerHTML = `<span>${icon}</span><span style="flex:1">${msg}</span>`;
+  cont.appendChild(toast);
+  setTimeout(()=>{ toast.style.opacity='0'; toast.style.transition='opacity 0.3s'; setTimeout(()=>toast.remove(),300); }, 3500);
+}
+
+// ─── GLOBAL SEARCH ───────────────────────────────────────────────────────────
+function globalSearch(v) {
+  if (!v) return;
+  const prodMatch = PRODUCTS.filter(p=>p.name.toLowerCase().includes(v.toLowerCase()));
+  const orderMatch = ORDERS.filter(o=>o.id.toLowerCase().includes(v.toLowerCase())||o.cust.toLowerCase().includes(v.toLowerCase()));
+  if (prodMatch.length>0) {
+    navigate('products');
+    setTimeout(()=>{ document.getElementById('prod-search').value=v; renderProductsTable(); },100);
+  } else if (orderMatch.length>0) {
+    navigate('orders');
+    setTimeout(()=>{ document.getElementById('order-search').value=v; renderOrdersTable(); },100);
+  }
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+renderDashboard();
+</script>
+</body>
+</html>
